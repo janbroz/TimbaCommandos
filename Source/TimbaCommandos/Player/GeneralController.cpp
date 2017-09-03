@@ -178,14 +178,11 @@ void AGeneralController::GenerateSelectingRectangle()
 	{		
 		PlayerHUD->StartSelectionRectangle(Init, End);
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("Number of actors is: %d"), EnclosedActors.Num());
-	//(Init.X, Init.Y, WorldLoc, WorldDir);
-	//UE_LOG(LogTemp, Warning, TEXT("Coords in world are: X:%f, Y:%f, Z:%f"), WorldLoc.X, WorldLoc.Y, WorldLoc.Z);
 }
 
 void AGeneralController::RightMousePressed()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Right click pressed"));
+	//UE_LOG(LogTemp, Warning, TEXT("Right click pressed"));
 
 	if (SelectedUnits.Num() != 0)
 	{
@@ -203,8 +200,6 @@ void AGeneralController::RightMousePressed()
 			}
 		}
 	}
-
-
 }
 
 void AGeneralController::VerticalMov(float Amount)

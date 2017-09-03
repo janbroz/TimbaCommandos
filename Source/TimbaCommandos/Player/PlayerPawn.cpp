@@ -3,6 +3,8 @@
 #include "PlayerPawn.h"
 #include "Camera/CameraComponent.h"
 #include "Classes/GameFramework/SpringArmComponent.h"
+#include "Perception/AIPerceptionSystem.h"
+#include "Perception/AISenseConfig_Sight.h"
 
 // Sets default values
 APlayerPawn::APlayerPawn()
@@ -22,6 +24,8 @@ APlayerPawn::APlayerPawn()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = true;
 	bUseControllerRotationYaw = true;
+
+	
 }
 
 // Called when the game starts or when spawned

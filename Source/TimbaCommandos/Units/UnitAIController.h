@@ -23,8 +23,13 @@ public:
 	UFUNCTION()
 		void SenseVision(TArray<AActor*> SensedActors);
 
+	UFUNCTION()
+		void DebugSeeingActors();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UAISenseConfig_Sight* SightConfig;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		TArray<AActor*> SensedActors;
 
 };

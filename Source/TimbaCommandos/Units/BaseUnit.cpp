@@ -5,6 +5,7 @@
 #include "Components/DecalComponent.h"
 #include "Perception/AIPerceptionSystem.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 // Sets default values
 ABaseUnit::ABaseUnit()
@@ -23,6 +24,9 @@ ABaseUnit::ABaseUnit()
 	AIControllerClass = AUnitAIController::StaticClass();
 	UnitName = TEXT("The unit");
 	
+	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimuli source"));
+	//StimuliSource->
+
 }
 
 // Called when the game starts or when spawned
@@ -30,7 +34,7 @@ void ABaseUnit::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, UAISense_Sight::StaticClass(), this);
+	//UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, UAISense_Sight::StaticClass(), this);
 }
 
 // Called every frame

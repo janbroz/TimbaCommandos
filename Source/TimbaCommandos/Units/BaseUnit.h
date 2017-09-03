@@ -33,6 +33,8 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		UDecalComponent* UnitSelectingDecal;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		class UAIPerceptionStimuliSourceComponent* StimuliSource;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		UTexture2D* UnitPortrait;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit variables")
