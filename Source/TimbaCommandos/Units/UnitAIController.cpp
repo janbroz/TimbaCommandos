@@ -18,7 +18,7 @@ AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer
 	
 	SightConfig->SightRadius = 800.f;
 	SightConfig->LoseSightRadius = 1000.f;
-	SightConfig->PeripheralVisionAngleDegrees = 45.f;
+	SightConfig->PeripheralVisionAngleDegrees = 60.f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;

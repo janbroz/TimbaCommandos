@@ -13,7 +13,8 @@ UCLASS()
 class TIMBACOMMANDOS_API AEnemyUnit : public ABaseUnit
 {
 	GENERATED_BODY()
-	
+public:
+	AEnemyUnit();
 	
 	
 	

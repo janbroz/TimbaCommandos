@@ -24,7 +24,7 @@ public:
 		void SenseVision(TArray<AActor*> SensedActors);
 
 	UFUNCTION()
-		void DebugSeeingActors();
+		virtual void DebugSeeingActors();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")

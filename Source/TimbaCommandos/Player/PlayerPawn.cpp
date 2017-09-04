@@ -14,12 +14,14 @@ APlayerPawn::APlayerPawn()
 
 	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera arm"));
 	CameraArm->SetupAttachment(RootComponent);
-	CameraArm->SetRelativeRotation(FRotator(-70.f, 0.f, 0.f));
+	CameraArm->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
 	CameraArm->TargetArmLength = 1500.f;
 	CameraArm->bDoCollisionTest = false;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraArm, CameraArm->GetAttachSocketName());
+	Camera->PostProcessSettings.AutoExposureMinBrightness = 1;
+	Camera->PostProcessSettings.AutoExposureMaxBrightness = 1;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = true;
