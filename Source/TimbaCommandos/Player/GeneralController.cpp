@@ -113,7 +113,10 @@ void AGeneralController::LeftMousePressed()
 	{
 		ABaseUnit* ValidUnit = Cast<ABaseUnit>(Hit.GetActor());
 
-		UpdateSelectedUnitsDecal(false);
+		if (!bPressingCtrl)
+		{
+			UpdateSelectedUnitsDecal(false);
+		}
 		if (ValidUnit)
 		{
 			if (bPressingCtrl)
@@ -130,7 +133,10 @@ void AGeneralController::LeftMousePressed()
 			ValidUnit->SetUnitSelected(true);
 		}else
 		{
-			SelectedUnits.Empty();
+			if (!bPressingCtrl)
+			{
+				SelectedUnits.Empty();
+			}		
 		}
 
 		MainHUD->UpdateSelectedUnits(SelectedUnits);
