@@ -26,7 +26,7 @@ ABaseUnit::ABaseUnit()
 	
 	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimuli source"));
 	//StimuliSource->
-
+	
 }
 
 // Called when the game starts or when spawned

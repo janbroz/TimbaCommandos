@@ -16,7 +16,16 @@ class TIMBACOMMANDOS_API AEnemyAIController : public AUnitAIController
 public:
 	AEnemyAIController(const FObjectInitializer& ObjectInitializer);
 	
+	// Override the possess stuff.
+	virtual void Possess(class APawn* InPawn) override;
+
 	UFUNCTION()
 		void DebugSeeingActors() override;
+
+	UFUNCTION()
+		virtual void BeginPlay() override;
 	
+
+
+
 };
