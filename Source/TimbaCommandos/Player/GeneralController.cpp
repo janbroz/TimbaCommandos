@@ -240,7 +240,7 @@ void AGeneralController::RotateCamera(float Amount)
 	if (Amount != 0)
 	{
 		FRotator CRotation = GetControlRotation();
-		CRotation.Yaw += 5.f * Amount;
+		CRotation.Yaw += 1.f * Amount;
 		SetControlRotation(CRotation);
 
 	}

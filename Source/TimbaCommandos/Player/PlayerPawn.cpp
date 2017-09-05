@@ -20,8 +20,10 @@ APlayerPawn::APlayerPawn()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraArm, CameraArm->GetAttachSocketName());
+	/*Camera->PostProcessSettings.bOverride_AutoExposureMinBrightness = true;
+	Camera->PostProcessSettings.bOverride_AutoExposureMaxBrightness = true;
 	Camera->PostProcessSettings.AutoExposureMinBrightness = 1;
-	Camera->PostProcessSettings.AutoExposureMaxBrightness = 1;
+	Camera->PostProcessSettings.AutoExposureMaxBrightness = 1;*/
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = true;
