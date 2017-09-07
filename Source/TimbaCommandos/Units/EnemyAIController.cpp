@@ -49,7 +49,7 @@ void AEnemyAIController::DebugSeeingActors()
 	AActor* CurrentTarget = Cast<AActor>(BlackboardComponent->GetValueAsObject(TEXT("TargetActor")));
 	if (CurrentTarget)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("We havea target"));
+		//UE_LOG(LogTemp, Warning, TEXT("We havea target"));
 		if (!SensedActors.Contains(CurrentTarget))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("He is out of our reach!"));

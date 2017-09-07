@@ -69,7 +69,7 @@ void AUnitAIController::Possess(APawn* InPawn)
 
 void AUnitAIController::SenseVision(TArray<AActor*> SensingActors)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Houston, we saw an actor"));
+	//UE_LOG(LogTemp, Warning, TEXT("Houston, we saw an actor"));
 	
 	//SensedActors = SensingActors;
 	SensedActors.Empty();

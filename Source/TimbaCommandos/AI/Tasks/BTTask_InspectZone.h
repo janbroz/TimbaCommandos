@@ -19,7 +19,7 @@ class TIMBACOMMANDOS_API UBTTask_InspectZone : public UBTTaskNode
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 	void LookAtAngle(AActor* Actor, float Angle, float DeltaSeconds);
-
+	bool InspectAdyacentLocation(UBehaviorTreeComponent& OwnerComp);
 
 	UPROPERTY(Category = Node, EditAnywhere)
 		uint32 bFinishedPatrol : 1;
@@ -27,4 +27,12 @@ class TIMBACOMMANDOS_API UBTTask_InspectZone : public UBTTaskNode
 		uint32 bSearchedLeft : 1;
 	UPROPERTY(Category = Node, EditAnywhere)
 		uint32 bSearchedRight : 1;
+	UPROPERTY(Category = Node, EditAnywhere)
+		int32 MaxPatrolZones;
+	UPROPERTY(Category = Node, EditAnywhere)
+		int32 CurrentPatrolZones;
+	UPROPERTY(Category = Node, EditAnywhere)
+		FVector LocationOfCuriosity;
+	UPROPERTY(Category = Node, EditAnywhere)
+		APawn* ControlledPawn;
 };
