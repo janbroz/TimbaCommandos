@@ -6,6 +6,10 @@
 #include "Perception/AIPerceptionSystem.h"
 #include "Classes/Kismet/KismetSystemLibrary.h"
 #include "Units/BaseUnit.h"
+#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
+#include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTreeComponent.h"
+#include "Runtime/AIModule/Classes/BehaviorTree/BlackboardComponent.h"
+#include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
 
 AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -22,7 +26,6 @@ AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-	
 
 	GetAIPerceptionComponent()->ConfigureSense(*SightConfig);
 	GetAIPerceptionComponent()->SetDominantSense(SightConfig->GetSenseImplementation());
@@ -30,6 +33,17 @@ AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer
 
 	// Register as a stimuli
 	UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, SightConfig->GetSenseImplementation(), GetPawn());
+
+	// Unit AI
+	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("UnitAIComponent"));
+	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("UnitBehaviorTree"));
+
+	static ConstructorHelpers::FObjectFinder<UBehaviorTree> Tree_BP(TEXT("/Game/Blueprints/Units/AI/BaseUnit/BaseUnit_BT"));
+	if (Tree_BP.Object != nullptr)
+	{
+		BehaviorTree = Tree_BP.Object;
+	}
+
 }
 
 void AUnitAIController::Tick(float DeltaSeconds)
@@ -39,9 +53,23 @@ void AUnitAIController::Tick(float DeltaSeconds)
 	DebugSeeingActors();
 }
 
+void AUnitAIController::Possess(APawn* InPawn)
+{
+	Super::Possess(InPawn);
+
+	// Do something crazy here.
+	if (BehaviorTree)
+	{
+		BlackboardComponent->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+		BehaviorTreeComponent->StartTree(*BehaviorTree, EBTExecutionMode::Looped);
+		BlackboardComponent->SetValueAsVector(TEXT("SpawnLocation"), InPawn->GetActorLocation());
+		BlackboardComponent->SetValueAsRotator(TEXT("SpawnRotation"), InPawn->GetActorRotation());
+	}
+}
+
 void AUnitAIController::SenseVision(TArray<AActor*> SensingActors)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Houston, we saw an actor"));
+	//UE_LOG(LogTemp, Warning, TEXT("Houston, we saw an actor"));
 	
 	//SensedActors = SensingActors;
 	SensedActors.Empty();
@@ -59,6 +87,7 @@ void AUnitAIController::DebugSeeingActors()
 			if (Unit)
 			{
 				UKismetSystemLibrary::DrawDebugLine(GetWorld(), GetPawn()->GetActorLocation(), Actor->GetActorLocation(), FColor::Black, 0.03f, 2.f);
+				//BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), Unit);
 			}
 		}
 	}	
