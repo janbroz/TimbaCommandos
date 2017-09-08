@@ -63,6 +63,9 @@ void UInventoryManager::UpdateWeight()
 	{
 		UpdatedWeight += Item->Weight;
 		Item->AddToInventory();
+
+		FItemInformation Info = FItemInformation(Item->Name, Item->Description);
+		NewInventory.Add(Info);
 	}
 	CurrentWeight = UpdatedWeight;
 }

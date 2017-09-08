@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "DataStructures.h"
 #include "InventoryManager.generated.h"
 
 
@@ -40,7 +41,9 @@ public:
 	// The players inventory
 	UPROPERTY(Category=InventoryInformation, BlueprintReadWrite, EditAnywhere)
 		TArray<class AItem*> Inventory;
-
+	UPROPERTY(Category = InventoryInformation, BlueprintReadWrite, EditAnywhere)
+		TArray<FItemInformation> NewInventory;
+	
 	// Player max weight allowed
 	UPROPERTY(Category= InventoryInformation, BlueprintReadWrite, EditAnywhere)
 		float MaxWeight;
