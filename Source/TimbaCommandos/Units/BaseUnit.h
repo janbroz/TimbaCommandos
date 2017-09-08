@@ -39,5 +39,7 @@ public:
 		UTexture2D* UnitPortrait;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		FString UnitName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		uint32 bIsPlayerControlled : 1;
 	
 };

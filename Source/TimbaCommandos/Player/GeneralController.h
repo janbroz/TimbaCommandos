@@ -62,7 +62,7 @@ public:
 		uint32 bDraggingMouse : 1;
 	// Player can select either one or multiple units
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
-		TArray<class ABaseUnit*> SelectedUnits;
+		TArray<class APlayerUnit*> SelectedUnits;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		FVector2D Init;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")

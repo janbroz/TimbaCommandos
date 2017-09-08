@@ -13,8 +13,8 @@ UCLASS()
 class TIMBACOMMANDOS_API APlayerUnit : public ABaseUnit
 {
 	GENERATED_BODY()
-	
-	
+
+	APlayerUnit();
 	
 	
 };

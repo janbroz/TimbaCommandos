@@ -25,7 +25,7 @@ ABaseUnit::ABaseUnit()
 	UnitName = TEXT("The unit");
 	
 	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimuli source"));
-	//StimuliSource->
+	bIsPlayerControlled = false;
 	
 }
 

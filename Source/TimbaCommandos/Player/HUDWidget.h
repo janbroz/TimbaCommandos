@@ -18,5 +18,5 @@ public:
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "HUD functions")
-		void UpdateSelectedUnits(const TArray<class ABaseUnit*>& SelectedUnits);
+		void UpdateSelectedUnits(const TArray<class APlayerUnit*>& SelectedUnits);
 };

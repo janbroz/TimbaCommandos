@@ -3,6 +3,7 @@
 #include "GeneralController.h"
 #include "Player/PlayerPawn.h"
 #include "Units/BaseUnit.h"
+#include "Units/PlayerUnit.h"
 #include "Player/PlayerHUD.h"
 #include "AIController.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
@@ -111,7 +112,7 @@ void AGeneralController::LeftMousePressed()
 
 	if (Hit.Actor != nullptr)
 	{
-		ABaseUnit* ValidUnit = Cast<ABaseUnit>(Hit.GetActor());
+		APlayerUnit* ValidUnit = Cast<APlayerUnit>(Hit.GetActor());
 
 		if (!bPressingCtrl)
 		{
@@ -164,7 +165,7 @@ void AGeneralController::ReleaseLeftMouse()
 		}
 		if (bPressingCtrl)
 		{
-			TArray<ABaseUnit*> NewUnits = PlayerHUD->GetSelectionResults();
+			TArray<APlayerUnit*> NewUnits = PlayerHUD->GetSelectionResults();
 			for (auto Unit : NewUnits)
 			{
 				SelectedUnits.AddUnique(Unit);
