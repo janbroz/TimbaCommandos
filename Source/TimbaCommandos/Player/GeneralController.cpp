@@ -9,6 +9,8 @@
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "UserWidget.h"
 #include "Player/HUDWidget.h"
+#include "Items/Item.h"
+#include "Items/InventoryManager.h"
 
 AGeneralController::AGeneralController()
 {
@@ -113,6 +115,7 @@ void AGeneralController::LeftMousePressed()
 	if (Hit.Actor != nullptr)
 	{
 		APlayerUnit* ValidUnit = Cast<APlayerUnit>(Hit.GetActor());
+		AItem* ValidItem = Cast<AItem>(Hit.GetActor());
 
 		if (!bPressingCtrl)
 		{
@@ -139,6 +142,7 @@ void AGeneralController::LeftMousePressed()
 				SelectedUnits.Empty();
 			}		
 		}
+		
 
 		MainHUD->UpdateSelectedUnits(SelectedUnits);
 	}else
@@ -189,14 +193,22 @@ void AGeneralController::GenerateSelectingRectangle()
 
 void AGeneralController::RightMousePressed()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Right click pressed"));
-
+	UE_LOG(LogTemp, Warning, TEXT("Right click pressed"));
 	if (SelectedUnits.Num() != 0)
 	{
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Camera, true, Hit);
+
 		if (Hit.bBlockingHit)
 		{
+			AItem* ValidItem = Cast<AItem>(Hit.GetActor());
+			if (ValidItem && FVector::Dist(ValidItem->GetActorLocation(), SelectedUnits[0]->GetActorLocation()) < 250.f)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("The item is close to us man"));
+				SelectedUnits[0]->InventoryManager->AddItem(ValidItem);
+				ValidItem->Destroy();
+			}
+
 			for (auto Unit : SelectedUnits)
 			{
 				AAIController* UnitController = Cast<AAIController>(Unit->GetController());
@@ -206,7 +218,11 @@ void AGeneralController::RightMousePressed()
 				}
 			}
 		}
+
+
+
 	}
+
 }
 
 void AGeneralController::VerticalMov(float Amount)

@@ -27,11 +27,13 @@ public:
 
 	// Return the inventory
 	UFUNCTION(BlueprintCallable)
-		TArray<class AItem*> GetInventory();
+		TArray<FItemInformation> GetInventory();
 	UFUNCTION(BlueprintCallable)
 		bool AddItem(class AItem* Item);
 	UFUNCTION(BlueprintCallable)
 		bool RemoveItem(int32 Index);
+	UFUNCTION(BlueprintCallable)
+		bool MoveItem(int32 IndexFrom, int32 IndexTo);
 	// If we need to make sure that the weight is correct at the beginning of the game.
 	UFUNCTION(BlueprintCallable)
 		void UpdateWeight();
@@ -39,10 +41,8 @@ public:
 
 public:
 	// The players inventory
-	UPROPERTY(Category=InventoryInformation, BlueprintReadWrite, EditAnywhere)
-		TArray<class AItem*> Inventory;
 	UPROPERTY(Category = InventoryInformation, BlueprintReadWrite, EditAnywhere)
-		TArray<FItemInformation> NewInventory;
+		TArray<FItemInformation> Inventory;
 	
 	// Player max weight allowed
 	UPROPERTY(Category= InventoryInformation, BlueprintReadWrite, EditAnywhere)

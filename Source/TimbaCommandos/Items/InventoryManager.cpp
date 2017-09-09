@@ -34,7 +34,7 @@ void UInventoryManager::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ...
 }
 
-TArray<AItem*> UInventoryManager::GetInventory()
+TArray<FItemInformation> UInventoryManager::GetInventory()
 {
 	return Inventory;
 }
@@ -43,7 +43,8 @@ bool UInventoryManager::AddItem(AItem* Item)
 {
 	// TODO, we need some logic to make sure the user can add the item to the inventory.
 	bool bSuccess = true;
-	Inventory.Add(Item);
+	FItemInformation ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->StaticClass(), Item->Icon);
+	Inventory.Add(ItemToAdd);
 
 	return bSuccess;
 }
@@ -56,16 +57,17 @@ bool UInventoryManager::RemoveItem(int32 Index)
 	return bSuccess;
 }
 
+bool UInventoryManager::MoveItem(int32 IndexFrom, int32 IndexTo)
+{
+	return true;
+}
+
 void UInventoryManager::UpdateWeight()
 {
 	float UpdatedWeight = 0.f;
 	for (auto Item : Inventory)
 	{
-		UpdatedWeight += Item->Weight;
-		Item->AddToInventory();
-
-		FItemInformation Info = FItemInformation(Item->Name, Item->Description);
-		NewInventory.Add(Info);
+		UpdatedWeight += Item.Weight;
 	}
 	CurrentWeight = UpdatedWeight;
 }
