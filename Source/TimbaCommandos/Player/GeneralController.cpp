@@ -273,3 +273,14 @@ void AGeneralController::ToggleControl()
 {
 	bPressingCtrl = !bPressingCtrl;
 }
+
+void AGeneralController::InitializeControlledUnits()
+{
+	if (MainHUD)
+	{
+		for (auto Unit : AvailableUnits)
+		{
+			MainHUD->SetHeroPortrait(Unit);
+		}
+	}
+}

@@ -55,6 +55,9 @@ public:
 	// Void clear selected units
 	void UpdateSelectedUnitsDecal(bool bSelected);
 
+	// Initialize our HUD with the controllable units
+	void InitializeControlledUnits();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		uint32 bPressingCtrl : 1;
@@ -63,6 +66,9 @@ public:
 	// Player can select either one or multiple units
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		TArray<class APlayerUnit*> SelectedUnits;
+	// The units that the player can use on this level.
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
+		TArray<class APlayerUnit*> AvailableUnits;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		FVector2D Init;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")

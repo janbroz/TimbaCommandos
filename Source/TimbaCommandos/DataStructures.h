@@ -36,6 +36,16 @@ public:
 		UTexture2D* Icon;
 };
 
+UENUM(BlueprintType)
+enum class EUnitClass : uint8
+{
+	Warrior				UMETA(DisplayName = "Warrior"),
+	Wizard				UMETA(DisplayName = "Wizard"),
+	Thief				UMETA(DisplayName = "Thief"),
+	Archer				UMETA(DisplayName = "Archer")
+};
+
+inline uint8 GetTypeHash(const EUnitClass A) { return (uint8)A; }
 
 class TIMBACOMMANDOS_API DataStructures
 {
