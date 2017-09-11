@@ -146,6 +146,10 @@ void AGeneralController::LeftMousePressed()
 		
 
 		MainHUD->UpdateSelectedUnits(SelectedUnits);
+		if (bShowingInventory)
+		{
+			MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+		}
 	}else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("We clicked nothing useful"));
@@ -290,10 +294,25 @@ void AGeneralController::InitializeControlledUnits()
 
 void AGeneralController::ToggleInventory()
 {
-	bShowingInventory = !bShowingInventory;
+	//bShowingInventory = !bShowingInventory;
 
-	if (bShowingInventory && MainHUD)
+	if (SelectedUnits.Num() > 0)
 	{
-		MainHUD->ShowInventory(SelectedUnits, true);
+		bShowingInventory = !bShowingInventory;
 	}
+	else
+	{
+		bShowingInventory = false;
+	}
+
+	UpdateInventoryWidgets();
+}
+
+void AGeneralController::UpdateInventoryWidgets()
+{
+	if (MainHUD)
+	{
+		MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+	}
+
 }

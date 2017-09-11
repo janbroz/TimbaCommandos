@@ -61,6 +61,9 @@ public:
 	// If we have a unit selected open the inventory
 	void ToggleInventory();
 
+	// Update the inventory widget!
+	void UpdateInventoryWidgets();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		uint32 bPressingCtrl : 1;

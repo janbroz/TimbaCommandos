@@ -2,6 +2,8 @@
 
 #include "InventoryManager.h"
 #include "Item.h"
+#include "Engine/World.h"
+#include "Player/GeneralController.h"
 
 // Sets default values for this component's properties
 UInventoryManager::UInventoryManager()
@@ -45,6 +47,12 @@ bool UInventoryManager::AddItem(AItem* Item)
 	bool bSuccess = true;
 	FItemInformation ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->StaticClass(), Item->Icon);
 	Inventory.Add(ItemToAdd);
+
+	AGeneralController* Pc = Cast<AGeneralController>(GetWorld()->GetFirstPlayerController());
+	if (Pc)
+	{
+		Pc->UpdateInventoryWidgets();
+	}
 
 	return bSuccess;
 }
