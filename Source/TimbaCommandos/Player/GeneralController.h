@@ -58,11 +58,16 @@ public:
 	// Initialize our HUD with the controllable units
 	void InitializeControlledUnits();
 
+	// If we have a unit selected open the inventory
+	void ToggleInventory();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		uint32 bPressingCtrl : 1;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		uint32 bDraggingMouse : 1;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
+		uint32 bShowingInventory : 1;
 	// Player can select either one or multiple units
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		TArray<class APlayerUnit*> SelectedUnits;

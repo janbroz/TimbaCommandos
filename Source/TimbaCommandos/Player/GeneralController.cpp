@@ -89,6 +89,7 @@ void AGeneralController::SetupInputComponent()
 	InputComponent->BindAction("RightMouse", IE_Pressed, this, &AGeneralController::RightMousePressed);
 	InputComponent->BindAction("Control", IE_Pressed, this, &AGeneralController::ToggleControl);
 	InputComponent->BindAction("Control", IE_Released, this, &AGeneralController::ToggleControl);
+	InputComponent->BindAction("ToggleInventory", IE_Pressed, this, &AGeneralController::ToggleInventory);
 
 	InputComponent->BindAxis("HorizontalMovement", this, &AGeneralController::HorizontalMov);
 	InputComponent->BindAxis("VerticalMovement", this, &AGeneralController::VerticalMov);
@@ -166,6 +167,8 @@ void AGeneralController::ReleaseLeftMouse()
 			SelectedUnits = PlayerHUD->GetSelectionResults();
 			UpdateSelectedUnitsDecal(true);
 
+			// Make it so that the inventory widget disapears.
+			bShowingInventory = false;
 		}
 		if (bPressingCtrl)
 		{
@@ -282,5 +285,15 @@ void AGeneralController::InitializeControlledUnits()
 		{
 			MainHUD->SetHeroPortrait(Unit);
 		}
+	}
+}
+
+void AGeneralController::ToggleInventory()
+{
+	bShowingInventory = !bShowingInventory;
+
+	if (bShowingInventory && MainHUD)
+	{
+		MainHUD->ShowInventory(SelectedUnits, true);
 	}
 }
