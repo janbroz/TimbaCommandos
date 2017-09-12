@@ -15,6 +15,8 @@
 AGeneralController::AGeneralController()
 {
 	bShowMouseCursor = true;
+	bEnableMouseOverEvents = true;
+	bEnableClickEvents = true;
 
 	static ConstructorHelpers::FObjectFinder<UClass> PlayerHUD_BP(TEXT("/Game/UMG/MainHUD.MainHUD_C"));
 	if (PlayerHUD_BP.Object)
