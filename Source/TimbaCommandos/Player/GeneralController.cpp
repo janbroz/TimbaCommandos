@@ -214,8 +214,7 @@ void AGeneralController::RightMousePressed()
 			if (ValidItem && FVector::Dist(ValidItem->GetActorLocation(), SelectedUnits[0]->GetActorLocation()) < 250.f)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("The item is close to us man"));
-				SelectedUnits[0]->InventoryManager->AddItem(ValidItem);
-				ValidItem->Destroy();
+				bool bSuccess = SelectedUnits[0]->InventoryManager->AddItem(ValidItem);
 			}
 
 			for (auto Unit : SelectedUnits)
@@ -281,6 +280,11 @@ void AGeneralController::RotateCamera(float Amount)
 void AGeneralController::ToggleControl()
 {
 	bPressingCtrl = !bPressingCtrl;
+}
+
+void AGeneralController::ResetControl()
+{
+	bPressingCtrl = false;
 }
 
 void AGeneralController::InitializeControlledUnits()

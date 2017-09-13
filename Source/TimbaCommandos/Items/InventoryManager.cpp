@@ -4,6 +4,7 @@
 #include "Item.h"
 #include "Engine/World.h"
 #include "Player/GeneralController.h"
+#include "Units/PlayerUnit.h"
 
 // Sets default values for this component's properties
 UInventoryManager::UInventoryManager()
@@ -14,7 +15,11 @@ UInventoryManager::UInventoryManager()
 
 	// ...
 	MaxWeight = 50.f;
+	MaxSlots = 9;
+	FreeSlots = 9;
+	UsedSlots = 0;
 	CurrentWeight = 0.f;
+	
 }
 
 
@@ -25,6 +30,7 @@ void UInventoryManager::BeginPlay()
 
 	// ...
 	UpdateWeight();
+	InitializeInventory();
 }
 
 
@@ -36,6 +42,15 @@ void UInventoryManager::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// ...
 }
 
+void UInventoryManager::InitializeInventory()
+{
+	for (auto i = 0; i < MaxSlots; ++i)
+	{
+		FItemInformation EmptySlot = FItemInformation();
+		Inventory.Add(EmptySlot);
+	}
+}
+
 TArray<FItemInformation> UInventoryManager::GetInventory()
 {
 	return Inventory;
@@ -45,16 +60,22 @@ bool UInventoryManager::AddItem(AItem* Item)
 {
 	// TODO, we need some logic to make sure the user can add the item to the inventory.
 	bool bSuccess = true;
-	FItemInformation ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->StaticClass(), Item->Icon);
-	Inventory.Add(ItemToAdd);
 
-	AGeneralController* Pc = Cast<AGeneralController>(GetWorld()->GetFirstPlayerController());
-	if (Pc)
+	if (FreeSlots > 0)
 	{
-		Pc->UpdateInventoryWidgets();
+		FItemInformation ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->StaticClass(), Item->Icon, ESlotState::Used);
+		int32 IndexToAdd = GetFirstEmptySlot();
+		Inventory[IndexToAdd] = ItemToAdd;
+		UpdatePlayerHUDInventory();
+		Item->Destroy();
+		FreeSlots--;
+		return bSuccess;
 	}
-
-	return bSuccess;
+	else
+	{
+		bSuccess = false;
+		return bSuccess;
+	}
 }
 
 bool UInventoryManager::RemoveItem(int32 Index)
@@ -78,4 +99,88 @@ void UInventoryManager::UpdateWeight()
 		UpdatedWeight += Item.Weight;
 	}
 	CurrentWeight = UpdatedWeight;
+}
+
+bool UInventoryManager::HasEmptySlot()
+{
+	bool bHasSlot = false;
+
+	for(auto Slot : Inventory)
+	{
+		if (Slot.State == ESlotState::Empty)
+		{
+			bHasSlot = true;
+			return bHasSlot;
+		}
+	}
+	return bHasSlot;
+}
+
+int32 UInventoryManager::GetFirstEmptySlot()
+{
+	int32 EmptySlot = 0;
+	for (auto i = 0; i < MaxSlots; ++i)
+	{
+		if (Inventory[i].State == ESlotState::Empty)
+		{
+			EmptySlot = i;
+			break;
+		}
+	}
+	return EmptySlot;
+}
+
+void UInventoryManager::UpdatePlayerHUDInventory()
+{
+	AGeneralController* Pc = Cast<AGeneralController>(GetWorld()->GetFirstPlayerController());
+	// We need also to check if the player is showing the inventory and the unit is selected
+	if (Pc)
+	{
+		Pc->UpdateInventoryWidgets();
+	}
+}
+
+void UInventoryManager::SwapItem(int32 IndexFrom, int32 IndexTo)
+{
+	FItemInformation TmpItem = Inventory[IndexTo];
+	Inventory[IndexTo] = Inventory[IndexFrom];
+	Inventory[IndexFrom] = TmpItem;
+	UpdatePlayerHUDInventory();
+}
+
+void UInventoryManager::TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit)
+{
+	int32 FromSize = GetSize(FromUnit->InventoryManager->Inventory[IndexFrom].State);
+	int32 ToSize = GetSize(Inventory[IndexTo].State);
+	
+	UE_LOG(LogTemp, Warning, TEXT("From is: %d"), FromSize);
+	UE_LOG(LogTemp, Warning, TEXT("To is: %d"), ToSize);
+
+	FItemInformation TmpItem = Inventory[IndexTo];
+	Inventory[IndexTo] = FromUnit->InventoryManager->Inventory[IndexFrom];
+	FromUnit->InventoryManager->Inventory[IndexFrom] = TmpItem;
+
+	FromUnit->InventoryManager->FreeSlots += FromSize;
+	FromUnit->InventoryManager->FreeSlots -= ToSize;
+	FreeSlots += ToSize;
+	FreeSlots -= FromSize;
+
+	UpdatePlayerHUDInventory();
+}
+
+int32 UInventoryManager::GetSize(ESlotState State)
+{
+	
+	switch (State)
+	{
+	case ESlotState::Empty:
+		return 0;
+		break;
+	case ESlotState::Used:
+		return 1;
+		break;
+	default:
+		return 1;
+		break;
+	}
 }

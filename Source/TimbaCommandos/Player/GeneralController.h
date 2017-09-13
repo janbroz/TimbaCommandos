@@ -40,6 +40,9 @@ public:
 	// Toggle control modifier
 	void ToggleControl();
 
+	// Reset control. Unit modifier was bugging/
+	void ResetControl();
+
 	// User finished drawing a rectangle.
 	void GenerateSelectingRectangle();
 

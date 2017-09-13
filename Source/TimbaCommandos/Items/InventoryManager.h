@@ -37,13 +37,34 @@ public:
 	// If we need to make sure that the weight is correct at the beginning of the game.
 	UFUNCTION(BlueprintCallable)
 		void UpdateWeight();
+	UFUNCTION(BlueprintCallable)
+		void InitializeInventory();
+	UFUNCTION(BlueprintCallable)
+		bool HasEmptySlot();
+	UFUNCTION(BlueprintCallable)
+		int32 GetFirstEmptySlot();
+	UFUNCTION(BlueprintCallable)
+		void UpdatePlayerHUDInventory();
+	UFUNCTION(BlueprintCallable)
+		void SwapItem(int32 IndexFrom, int32 IndexTo);
+	UFUNCTION(BlueprintCallable)
+		void TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit);
 
+	int32 GetSize(ESlotState Slot);
 
 public:
 	// The players inventory
 	UPROPERTY(Category = InventoryInformation, BlueprintReadWrite, EditAnywhere)
 		TArray<FItemInformation> Inventory;
 	
+	// Inventory slots
+	UPROPERTY(Category = InventoryInformation, BlueprintReadWrite, EditAnywhere)
+		int32 MaxSlots;
+	UPROPERTY(Category = InventoryInformation, BlueprintReadWrite, EditAnywhere)
+		int32 UsedSlots;
+	UPROPERTY(Category = InventoryInformation, BlueprintReadWrite, EditAnywhere)
+		int32 FreeSlots;
+
 	// Player max weight allowed
 	UPROPERTY(Category= InventoryInformation, BlueprintReadWrite, EditAnywhere)
 		float MaxWeight;
