@@ -103,6 +103,8 @@ void UInventoryManager::UpdateWeight()
 
 bool UInventoryManager::HasEmptySlot()
 {
+	// This might be redundant, cause we already have a freeSlot variable.
+
 	bool bHasSlot = false;
 
 	for(auto Slot : Inventory)
@@ -148,29 +150,42 @@ void UInventoryManager::SwapItem(int32 IndexFrom, int32 IndexTo)
 	UpdatePlayerHUDInventory();
 }
 
-void UInventoryManager::TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit)
+bool UInventoryManager::TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit)
 {
-	int32 FromSize = GetSize(FromUnit->InventoryManager->Inventory[IndexFrom].State);
-	int32 ToSize = GetSize(Inventory[IndexTo].State);
-	
-	UE_LOG(LogTemp, Warning, TEXT("From is: %d"), FromSize);
-	UE_LOG(LogTemp, Warning, TEXT("To is: %d"), ToSize);
+	// Aditionally, it needs to check the distance between the actors.
+	// and it needs to be a bool!
 
-	FItemInformation TmpItem = Inventory[IndexTo];
-	Inventory[IndexTo] = FromUnit->InventoryManager->Inventory[IndexFrom];
-	FromUnit->InventoryManager->Inventory[IndexFrom] = TmpItem;
+	bool bTransferSuccessful = false;
 
-	FromUnit->InventoryManager->FreeSlots += FromSize;
-	FromUnit->InventoryManager->FreeSlots -= ToSize;
-	FreeSlots += ToSize;
-	FreeSlots -= FromSize;
+	float DistanceBetweenActors = GetOwner()->GetDistanceTo(FromUnit);
 
-	UpdatePlayerHUDInventory();
+	if (DistanceBetweenActors < TRANSFER_DISTANCE)
+	{
+		int32 FromSize = GetSize(FromUnit->InventoryManager->Inventory[IndexFrom].State);
+		int32 ToSize = GetSize(Inventory[IndexTo].State);
+
+		UE_LOG(LogTemp, Warning, TEXT("From is: %d"), FromSize);
+		UE_LOG(LogTemp, Warning, TEXT("To is: %d"), ToSize);
+
+		FItemInformation TmpItem = Inventory[IndexTo];
+		Inventory[IndexTo] = FromUnit->InventoryManager->Inventory[IndexFrom];
+		FromUnit->InventoryManager->Inventory[IndexFrom] = TmpItem;
+
+		FromUnit->InventoryManager->FreeSlots += FromSize;
+		FromUnit->InventoryManager->FreeSlots -= ToSize;
+		FreeSlots += ToSize;
+		FreeSlots -= FromSize;
+
+		UpdatePlayerHUDInventory();
+
+		bTransferSuccessful = true;
+	}
+	return bTransferSuccessful;
 }
 
 int32 UInventoryManager::GetSize(ESlotState State)
 {
-	
+	// If the slot is empty the value is 0, else 1.
 	switch (State)
 	{
 	case ESlotState::Empty:

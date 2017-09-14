@@ -21,6 +21,9 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+private:
+	const float TRANSFER_DISTANCE = 300.f;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -48,7 +51,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SwapItem(int32 IndexFrom, int32 IndexTo);
 	UFUNCTION(BlueprintCallable)
-		void TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit);
+		bool TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit);
 
 	int32 GetSize(ESlotState Slot);
 
