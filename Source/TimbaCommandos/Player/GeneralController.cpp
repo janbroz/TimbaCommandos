@@ -226,11 +226,7 @@ void AGeneralController::RightMousePressed()
 				}
 			}
 		}
-
-
-
 	}
-
 }
 
 void AGeneralController::VerticalMov(float Amount)
@@ -273,7 +269,6 @@ void AGeneralController::RotateCamera(float Amount)
 		FRotator CRotation = GetControlRotation();
 		CRotation.Yaw += 1.f * Amount;
 		SetControlRotation(CRotation);
-
 	}
 }
 
@@ -289,12 +284,16 @@ void AGeneralController::ResetControl()
 
 void AGeneralController::InitializeControlledUnits()
 {
+	SelectedUnits.Add(AvailableUnits[0]);
+
 	if (MainHUD)
 	{
 		for (auto Unit : AvailableUnits)
 		{
 			MainHUD->SetHeroPortrait(Unit);
 		}
+		MainHUD->UpdateSelectedUnits(SelectedUnits);
+		UpdateSelectedUnitsDecal(true);
 	}
 }
 

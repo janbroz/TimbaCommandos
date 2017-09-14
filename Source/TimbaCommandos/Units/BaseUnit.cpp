@@ -66,3 +66,8 @@ void ABaseUnit::SetUnitSelected(bool bSelected)
 		UnitSelectingDecal->SetHiddenInGame(true);
 	}
 }
+
+UInventoryManager* ABaseUnit::GetInventoryManager() const
+{
+	return InventoryManager;
+}

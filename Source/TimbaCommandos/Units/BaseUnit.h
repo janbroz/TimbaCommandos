@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Items/HasStorageActor.h"
 #include "BaseUnit.generated.h"
 
 UCLASS()
-class TIMBACOMMANDOS_API ABaseUnit : public ACharacter
+class TIMBACOMMANDOS_API ABaseUnit : public ACharacter, public IHasStorageActor
 {
 	GENERATED_BODY()
 
@@ -28,7 +29,9 @@ public:
 
 	void SetUnitSelected(bool bSelected);
 
-	
+	// Implement the storage interface function
+	virtual UInventoryManager* GetInventoryManager() const override;
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UInventoryManager* InventoryManager;
