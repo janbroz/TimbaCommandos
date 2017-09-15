@@ -4,4 +4,7 @@
 
 
 
-
+APlayerUnit::APlayerUnit()
+{
+	bIsPlayerControlled = true;
+}

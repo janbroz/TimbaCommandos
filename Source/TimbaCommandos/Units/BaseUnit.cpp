@@ -6,13 +6,13 @@
 #include "Perception/AIPerceptionSystem.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Items/InventoryManager.h"
 
 // Sets default values
 ABaseUnit::ABaseUnit()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 
 	// We want something that tell us when the unit is selected.
 	UnitSelectingDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal selection"));
@@ -25,8 +25,10 @@ ABaseUnit::ABaseUnit()
 	UnitName = TEXT("The unit");
 	
 	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimuli source"));
-	//StimuliSource->
-	
+	bIsPlayerControlled = false;
+
+	// The unit inventory
+	InventoryManager = CreateDefaultSubobject<UInventoryManager>(TEXT("Inventory manager"));
 }
 
 // Called when the game starts or when spawned
@@ -63,4 +65,9 @@ void ABaseUnit::SetUnitSelected(bool bSelected)
 	{
 		UnitSelectingDecal->SetHiddenInGame(true);
 	}
+}
+
+UInventoryManager* ABaseUnit::GetInventoryManager() const
+{
+	return InventoryManager;
 }
