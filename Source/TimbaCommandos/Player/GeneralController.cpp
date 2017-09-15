@@ -59,12 +59,22 @@ void AGeneralController::RectangleDrag()
 			if (PlayerHUD)
 			{
 				PlayerHUD->UpdateSelectionRectangle(Init, End);
-				UpdateSelectedUnitsDecal(false);
-				SelectedUnits = PlayerHUD->GetSelectionResults();
-				for (auto Unit : SelectedUnits)
+				
+				TArray<APlayerUnit*> RectangleSelectedUnits = PlayerHUD->GetSelectionResults();
+				if (RectangleSelectedUnits.Num() > 0)
 				{
-					Unit->SetUnitSelected(true);
+					UpdateSelectedUnitsDecal(false);
+					SelectedUnits = RectangleSelectedUnits;
+					for (auto Unit : SelectedUnits)
+					{
+						Unit->SetUnitSelected(true);
+					}
+					if (bShowingInventory)
+					{
+						MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+					}
 				}
+				
 				if (MainHUD)
 				{
 					MainHUD->UpdateSelectedUnits(SelectedUnits);
@@ -120,10 +130,6 @@ void AGeneralController::LeftMousePressed()
 		APlayerUnit* ValidUnit = Cast<APlayerUnit>(Hit.GetActor());
 		AItem* ValidItem = Cast<AItem>(Hit.GetActor());
 
-		if (!bPressingCtrl)
-		{
-			UpdateSelectedUnitsDecal(false);
-		}
 		if (ValidUnit)
 		{
 			if (bPressingCtrl)
@@ -132,29 +138,18 @@ void AGeneralController::LeftMousePressed()
 			}
 			else
 			{
+				UpdateSelectedUnitsDecal(false);
 				SelectedUnits.Empty();
 				SelectedUnits.AddUnique(ValidUnit);
-				
 			}
-			
 			ValidUnit->SetUnitSelected(true);
-		}else
-		{
-			if (!bPressingCtrl)
-			{
-				SelectedUnits.Empty();
-			}		
 		}
 		
-
 		MainHUD->UpdateSelectedUnits(SelectedUnits);
 		if (bShowingInventory)
 		{
 			MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
 		}
-	}else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("We clicked nothing useful"));
 	}
 }
 
