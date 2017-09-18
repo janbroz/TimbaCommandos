@@ -24,16 +24,28 @@ enum class ESlotState : uint8
 	Used				UMETA(DisplayName = "Used")
 };
 
+UENUM(BlueprintType)
+enum class EStat : uint8
+{
+	Health				UMETA(DisplayName = "Health"),
+	Mana				UMETA(DisplayName = "Mana"),
+	Experience			UMETA(DisplayName = "Experience"),
+	Agility				UMETA(DisplayName = "Agility"),
+	Strength			UMETA(DisplayName = "Strength"),
+	Intellect			UMETA(DisplayName = "Intellect"),
+	Stamina				UMETA(DisplayName = "Stamina"),
+	None				UMETA(DisplayName = "None")
+};
+
 inline uint8 GetTypeHash(const EUnitClass A) { return (uint8)A; }
 inline uint8 GetTypeHash(const ESlotState A) { return (uint8)A; }
+inline uint8 GetTypeHash(const EStat A) { return (uint8)A; }
 
 USTRUCT(BlueprintType)
 struct FItemInformation
 {
 	GENERATED_BODY()
 public:
-
-	
 
 	FItemInformation(FName NewName, FString NewDescription, float NewWeight, TSubclassOf<class AItem> NewClass, UTexture2D* NewIcon, ESlotState NewState)
 	{
@@ -62,7 +74,25 @@ public:
 		ESlotState State;
 };
 
+USTRUCT(BlueprintType)
+struct FStatInformation
+{
+	GENERATED_BODY()
+public:
+	FStatInformation(FName StatName) { Name = StatName;  MinValue = 1; MaxValue = 1; CurrentValue = 1; Percent = 1; }
+	FStatInformation() {}
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		FName Name;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		float MinValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		float MaxValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		float CurrentValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		float Percent;
+};
 
 class TIMBACOMMANDOS_API DataStructures
 {

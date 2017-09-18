@@ -7,6 +7,7 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Items/InventoryManager.h"
+#include "Units/StatsComponent.h"
 
 // Sets default values
 ABaseUnit::ABaseUnit()
@@ -29,6 +30,11 @@ ABaseUnit::ABaseUnit()
 
 	// The unit inventory
 	InventoryManager = CreateDefaultSubobject<UInventoryManager>(TEXT("Inventory manager"));
+
+	// The stats manager
+	StatsManager = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsManager"));
+
+	
 }
 
 // Called when the game starts or when spawned

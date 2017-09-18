@@ -36,6 +36,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UInventoryManager* InventoryManager;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		class UStatsComponent* StatsManager;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		UDecalComponent* UnitSelectingDecal;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UAIPerceptionStimuliSourceComponent* StimuliSource;
