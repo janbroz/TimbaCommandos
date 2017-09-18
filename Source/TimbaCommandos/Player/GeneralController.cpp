@@ -3,15 +3,20 @@
 #include "GeneralController.h"
 #include "Player/PlayerPawn.h"
 #include "Units/BaseUnit.h"
+#include "Units/PlayerUnit.h"
 #include "Player/PlayerHUD.h"
 #include "AIController.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "UserWidget.h"
 #include "Player/HUDWidget.h"
+#include "Items/Item.h"
+#include "Items/InventoryManager.h"
 
 AGeneralController::AGeneralController()
 {
 	bShowMouseCursor = true;
+	bEnableMouseOverEvents = true;
+	bEnableClickEvents = true;
 
 	static ConstructorHelpers::FObjectFinder<UClass> PlayerHUD_BP(TEXT("/Game/UMG/MainHUD.MainHUD_C"));
 	if (PlayerHUD_BP.Object)
@@ -54,12 +59,22 @@ void AGeneralController::RectangleDrag()
 			if (PlayerHUD)
 			{
 				PlayerHUD->UpdateSelectionRectangle(Init, End);
-				UpdateSelectedUnitsDecal(false);
-				SelectedUnits = PlayerHUD->GetSelectionResults();
-				for (auto Unit : SelectedUnits)
+				
+				TArray<APlayerUnit*> RectangleSelectedUnits = PlayerHUD->GetSelectionResults();
+				if (RectangleSelectedUnits.Num() > 0)
 				{
-					Unit->SetUnitSelected(true);
+					UpdateSelectedUnitsDecal(false);
+					SelectedUnits = RectangleSelectedUnits;
+					for (auto Unit : SelectedUnits)
+					{
+						Unit->SetUnitSelected(true);
+					}
+					if (bShowingInventory)
+					{
+						MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+					}
 				}
+				
 				if (MainHUD)
 				{
 					MainHUD->UpdateSelectedUnits(SelectedUnits);
@@ -86,6 +101,7 @@ void AGeneralController::SetupInputComponent()
 	InputComponent->BindAction("RightMouse", IE_Pressed, this, &AGeneralController::RightMousePressed);
 	InputComponent->BindAction("Control", IE_Pressed, this, &AGeneralController::ToggleControl);
 	InputComponent->BindAction("Control", IE_Released, this, &AGeneralController::ToggleControl);
+	InputComponent->BindAction("ToggleInventory", IE_Pressed, this, &AGeneralController::ToggleInventory);
 
 	InputComponent->BindAxis("HorizontalMovement", this, &AGeneralController::HorizontalMov);
 	InputComponent->BindAxis("VerticalMovement", this, &AGeneralController::VerticalMov);
@@ -111,12 +127,9 @@ void AGeneralController::LeftMousePressed()
 
 	if (Hit.Actor != nullptr)
 	{
-		ABaseUnit* ValidUnit = Cast<ABaseUnit>(Hit.GetActor());
+		APlayerUnit* ValidUnit = Cast<APlayerUnit>(Hit.GetActor());
+		AItem* ValidItem = Cast<AItem>(Hit.GetActor());
 
-		if (!bPressingCtrl)
-		{
-			UpdateSelectedUnitsDecal(false);
-		}
 		if (ValidUnit)
 		{
 			if (bPressingCtrl)
@@ -125,24 +138,18 @@ void AGeneralController::LeftMousePressed()
 			}
 			else
 			{
+				UpdateSelectedUnitsDecal(false);
 				SelectedUnits.Empty();
 				SelectedUnits.AddUnique(ValidUnit);
-				
 			}
-			
 			ValidUnit->SetUnitSelected(true);
-		}else
-		{
-			if (!bPressingCtrl)
-			{
-				SelectedUnits.Empty();
-			}		
 		}
-
+		
 		MainHUD->UpdateSelectedUnits(SelectedUnits);
-	}else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("We clicked nothing useful"));
+		if (bShowingInventory)
+		{
+			MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+		}
 	}
 }
 
@@ -161,10 +168,12 @@ void AGeneralController::ReleaseLeftMouse()
 			SelectedUnits = PlayerHUD->GetSelectionResults();
 			UpdateSelectedUnitsDecal(true);
 
+			// Make it so that the inventory widget disapears.
+			bShowingInventory = false;
 		}
 		if (bPressingCtrl)
 		{
-			TArray<ABaseUnit*> NewUnits = PlayerHUD->GetSelectionResults();
+			TArray<APlayerUnit*> NewUnits = PlayerHUD->GetSelectionResults();
 			for (auto Unit : NewUnits)
 			{
 				SelectedUnits.AddUnique(Unit);
@@ -188,14 +197,21 @@ void AGeneralController::GenerateSelectingRectangle()
 
 void AGeneralController::RightMousePressed()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Right click pressed"));
-
+	UE_LOG(LogTemp, Warning, TEXT("Right click pressed"));
 	if (SelectedUnits.Num() != 0)
 	{
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Camera, true, Hit);
+
 		if (Hit.bBlockingHit)
 		{
+			AItem* ValidItem = Cast<AItem>(Hit.GetActor());
+			if (ValidItem && FVector::Dist(ValidItem->GetActorLocation(), SelectedUnits[0]->GetActorLocation()) < 250.f)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("The item is close to us man"));
+				bool bSuccess = SelectedUnits[0]->InventoryManager->AddItem(ValidItem);
+			}
+
 			for (auto Unit : SelectedUnits)
 			{
 				AAIController* UnitController = Cast<AAIController>(Unit->GetController());
@@ -248,11 +264,55 @@ void AGeneralController::RotateCamera(float Amount)
 		FRotator CRotation = GetControlRotation();
 		CRotation.Yaw += 1.f * Amount;
 		SetControlRotation(CRotation);
-
 	}
 }
 
 void AGeneralController::ToggleControl()
 {
 	bPressingCtrl = !bPressingCtrl;
+}
+
+void AGeneralController::ResetControl()
+{
+	bPressingCtrl = false;
+}
+
+void AGeneralController::InitializeControlledUnits()
+{
+	SelectedUnits.Add(AvailableUnits[0]);
+
+	if (MainHUD)
+	{
+		for (auto Unit : AvailableUnits)
+		{
+			MainHUD->SetHeroPortrait(Unit);
+		}
+		MainHUD->UpdateSelectedUnits(SelectedUnits);
+		UpdateSelectedUnitsDecal(true);
+	}
+}
+
+void AGeneralController::ToggleInventory()
+{
+	//bShowingInventory = !bShowingInventory;
+
+	if (SelectedUnits.Num() > 0)
+	{
+		bShowingInventory = !bShowingInventory;
+	}
+	else
+	{
+		bShowingInventory = false;
+	}
+
+	UpdateInventoryWidgets();
+}
+
+void AGeneralController::UpdateInventoryWidgets()
+{
+	if (MainHUD)
+	{
+		MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+	}
+
 }

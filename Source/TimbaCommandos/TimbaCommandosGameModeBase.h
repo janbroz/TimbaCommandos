@@ -16,6 +16,6 @@ class TIMBACOMMANDOS_API ATimbaCommandosGameModeBase : public AGameModeBase
 public:
 	ATimbaCommandosGameModeBase(const FObjectInitializer& ObjectInitializer);
 	
-	
+	virtual void BeginPlay() override;
 	
 };

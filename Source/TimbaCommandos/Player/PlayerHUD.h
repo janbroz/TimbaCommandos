@@ -24,13 +24,13 @@ public:
 	void StartSelectionRectangle(FVector2D StartLocation, FVector2D EndLocation);
 	void UpdateSelectionRectangle(FVector2D StartLocation, FVector2D EndLocation);
 	void FinishSelectionRectangle(FVector2D StartLocation, FVector2D EndLocation);
-	TArray<class ABaseUnit*> GetSelectionResults();
+	TArray<class APlayerUnit*> GetSelectionResults();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD information")
 		uint32 bDrawSelectionRectangle :1;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD information")
-		TArray<class ABaseUnit*> SelectedUnits;
+		TArray<class APlayerUnit*> SelectedUnits;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD information")
 		FVector2D RInit;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD information")

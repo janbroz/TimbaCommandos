@@ -2,6 +2,7 @@
 
 #include "PlayerHUD.h"
 #include "Units/BaseUnit.h"
+#include "Units/PlayerUnit.h"
 
 void APlayerHUD::Tick(float DeltaSeconds)
 {
@@ -49,7 +50,7 @@ void APlayerHUD::FinishSelectionRectangle(FVector2D StartLocation, FVector2D End
 	bDrawSelectionRectangle = false;
 }
 
-TArray<ABaseUnit*> APlayerHUD::GetSelectionResults()
+TArray<APlayerUnit*> APlayerHUD::GetSelectionResults()
 {
 	return SelectedUnits;
 }
