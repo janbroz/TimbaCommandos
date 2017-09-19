@@ -79,7 +79,7 @@ struct FStatInformation
 {
 	GENERATED_BODY()
 public:
-	FStatInformation(FName StatName) { Name = StatName;  MinValue = 1; MaxValue = 1; CurrentValue = 1; Percent = 1; }
+	FStatInformation(FName StatName) { Name = StatName;  MinValue = 0; MaxValue = 1; CurrentValue = 1; Percent = 1; }
 	FStatInformation() {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")

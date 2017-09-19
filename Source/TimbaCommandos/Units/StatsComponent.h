@@ -17,6 +17,11 @@ public:
 	// Sets default values for this component's properties
 	UStatsComponent(const FObjectInitializer& ObjectInitializer);
 
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+		float GetHealthPercent() const;
+	UFUNCTION(BlueprintCallable, Category = "HUD")
+		float GetStatPercent(EStat Stat) const;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -29,6 +34,13 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	// Update Stat values
+	void UpdateStatMax(EStat Stat, float Value);
+	void UpdateStatMin(EStat Stat, float Value);
+	void UpdateStatCurrent(EStat Stat, float Value);
+	void UpdateStatPercent(EStat Stat);
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		TMap<EStat, FStatInformation> Stats;
 	
