@@ -94,6 +94,19 @@ public:
 		float Percent;
 };
 
+USTRUCT(BlueprintType)
+struct FBoundsDamageEvent : public FDamageEvent
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+		float Multiplier;
+
+
+};
+
+
 class TIMBACOMMANDOS_API DataStructures
 {
 public:

@@ -25,6 +25,13 @@ protected:
 	void InitializeStats();
 	void UpdatePercents();
 
+public:
+	void ApplyDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser);
+
+	// The manager reports to the pawn that the unit just died, it should do stuff like
+	// spawn a ragdoll, stop the components ticks and kill the AIs.
+	void ReportUnitDying();
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

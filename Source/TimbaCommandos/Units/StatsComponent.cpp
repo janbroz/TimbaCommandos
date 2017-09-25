@@ -23,6 +23,7 @@ void UStatsComponent::BeginPlay()
 
 	// ...
 	//InitializeStats();
+	//UpdatePercents();
 }
 
 
@@ -69,8 +70,29 @@ void UStatsComponent::UpdatePercents()
 		FString Texty = Stat.Value.Name.ToString();
 
 		UE_LOG(LogTemp, Warning, TEXT("Stat name is: %s"), *Texty);
-		UE_LOG(LogTemp, Warning, TEXT("Max value is: %d"), Stat.Value.CurrentValue);
+		UE_LOG(LogTemp, Warning, TEXT("Max value is: %f"), Stat.Value.CurrentValue);
 
 		Stat.Value.Percent = Stat.Value.MaxValue / Stat.Value.CurrentValue;
 	}
+}
+
+void UStatsComponent::ApplyDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	FStatInformation* ModifiedStat = Stats.Find(EStat::Health);
+	UE_LOG(LogTemp, Warning, TEXT("Stat value is: %f"), ModifiedStat->CurrentValue);
+	UE_LOG(LogTemp, Warning, TEXT("Damage to the unit is: %f"), DamageAmount);
+	ModifiedStat->CurrentValue = FMath::Clamp(ModifiedStat->CurrentValue - DamageAmount, ModifiedStat->MinValue, ModifiedStat->MaxValue);
+
+	if (ModifiedStat->CurrentValue <= ModifiedStat->MinValue)
+	{
+		ReportUnitDying();
+	}
+
+	FDamageEvent FDE;
+	
+}
+
+void UStatsComponent::ReportUnitDying()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Unit is kaput!"));
 }

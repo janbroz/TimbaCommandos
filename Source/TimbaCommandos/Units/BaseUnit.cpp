@@ -77,3 +77,13 @@ UInventoryManager* ABaseUnit::GetInventoryManager() const
 {
 	return InventoryManager;
 }
+
+float ABaseUnit::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	StatsManager->ApplyDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	UE_LOG(LogTemp, Warning, TEXT("Ouch i took %f damage"), ActualDamage);
+
+	return ActualDamage;
+}

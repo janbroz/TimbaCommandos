@@ -32,6 +32,9 @@ public:
 	// Implement the storage interface function
 	virtual UInventoryManager* GetInventoryManager() const override;
 
+	// Actor takes damage
+	float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UInventoryManager* InventoryManager;
