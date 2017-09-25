@@ -12,7 +12,7 @@ UStatsComponent::UStatsComponent(const FObjectInitializer& ObjectInitializer)
 
 	// ...
 	InitializeStats();
-	UpdatePercents();
+	
 }
 
 
@@ -23,7 +23,7 @@ void UStatsComponent::BeginPlay()
 
 	// ...
 	//InitializeStats();
-	//UpdatePercents();
+	UpdatePercents();
 }
 
 
@@ -33,6 +33,7 @@ void UStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+
 }
 
 void UStatsComponent::InitializeComponent()
@@ -65,34 +66,48 @@ void UStatsComponent::InitializeStats()
 
 void UStatsComponent::UpdatePercents()
 {
-	for (auto Stat : Stats)
+	UE_LOG(LogTemp, Warning, TEXT("They called me"));
+
+	for (auto Stat = Stats.CreateIterator(); Stat; ++Stat)
 	{
-		FString Texty = Stat.Value.Name.ToString();
-
-		UE_LOG(LogTemp, Warning, TEXT("Stat name is: %s"), *Texty);
-		UE_LOG(LogTemp, Warning, TEXT("Max value is: %f"), Stat.Value.CurrentValue);
-
-		Stat.Value.Percent = Stat.Value.MaxValue / Stat.Value.CurrentValue;
+		Stat.Value().Percent = Stat.Value().CurrentValue / Stat.Value().MaxValue;
 	}
 }
 
-void UStatsComponent::ApplyDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+float UStatsComponent::GetHealthPercent() const
 {
-	FStatInformation* ModifiedStat = Stats.Find(EStat::Health);
-	UE_LOG(LogTemp, Warning, TEXT("Stat value is: %f"), ModifiedStat->CurrentValue);
-	UE_LOG(LogTemp, Warning, TEXT("Damage to the unit is: %f"), DamageAmount);
-	ModifiedStat->CurrentValue = FMath::Clamp(ModifiedStat->CurrentValue - DamageAmount, ModifiedStat->MinValue, ModifiedStat->MaxValue);
-
-	if (ModifiedStat->CurrentValue <= ModifiedStat->MinValue)
-	{
-		ReportUnitDying();
-	}
-
-	FDamageEvent FDE;
-	
+	float Percent = Stats.Find(EStat::Health)->Percent;
+	return Percent;
 }
 
-void UStatsComponent::ReportUnitDying()
+float UStatsComponent::GetStatPercent(EStat Stat) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("Unit is kaput!"));
+	float Percent = Stats.Find(Stat)->Percent;
+	return Percent;
+}
+
+void UStatsComponent::UpdateStatMax(EStat Stat, float Value)
+{
+	FStatInformation* Info = Stats.Find(Stat);
+	Info->MaxValue = Value;
+	UpdateStatPercent(Stat);
+}
+
+void UStatsComponent::UpdateStatMin(EStat Stat, float Value)
+{
+	FStatInformation* Info = Stats.Find(Stat);
+	Info->MinValue = Value;
+}
+
+void UStatsComponent::UpdateStatCurrent(EStat Stat, float Value)
+{
+	FStatInformation* Info = Stats.Find(Stat);
+	Info->CurrentValue = Value;
+	UpdateStatPercent(Stat);
+}
+
+void UStatsComponent::UpdateStatPercent(EStat Stat)
+{
+	FStatInformation* Info = Stats.Find(Stat);
+	Info->Percent = Info->CurrentValue / Info->MaxValue;
 }
