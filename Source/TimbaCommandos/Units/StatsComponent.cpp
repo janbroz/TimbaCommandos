@@ -111,3 +111,15 @@ void UStatsComponent::UpdateStatPercent(EStat Stat)
 	FStatInformation* Info = Stats.Find(Stat);
 	Info->Percent = Info->CurrentValue / Info->MaxValue;
 }
+
+void UStatsComponent::ApplyDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	FStatInformation* ModifiedStat = Stats.Find(EStat::Health);
+	ModifiedStat->CurrentValue = FMath::Clamp(ModifiedStat->CurrentValue - DamageAmount, ModifiedStat->MinValue, ModifiedStat->MaxValue);
+	UpdateStatPercent(EStat::Health);
+	if (ModifiedStat->CurrentValue <= ModifiedStat->MinValue)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Im dying"));
+	}
+
+}

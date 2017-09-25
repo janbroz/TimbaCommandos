@@ -37,9 +37,19 @@ enum class EStat : uint8
 	None				UMETA(DisplayName = "None")
 };
 
+UENUM(BlueprintType)
+enum class EUnitAction : uint8
+{
+	Move				UMETA(DisplayName = "Move"),
+	Attack				UMETA(DisplayName = "Attack"),
+	Interact			UMETA(DisplayName = "Interact"),
+	None				UMETA(DisplayName = "None")
+};
+
 inline uint8 GetTypeHash(const EUnitClass A) { return (uint8)A; }
 inline uint8 GetTypeHash(const ESlotState A) { return (uint8)A; }
 inline uint8 GetTypeHash(const EStat A) { return (uint8)A; }
+inline uint8 GetTypeHash(const EUnitAction A) { return (uint8)A; }
 
 USTRUCT(BlueprintType)
 struct FItemInformation

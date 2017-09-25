@@ -31,7 +31,7 @@ protected:
 	void UpdatePercents();
 
 public:
-	void ApplyDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser);
+	void ApplyDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
 	// The manager reports to the pawn that the unit just died, it should do stuff like
 	// spawn a ragdoll, stop the components ticks and kill the AIs.
