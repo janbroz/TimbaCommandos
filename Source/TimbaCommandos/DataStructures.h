@@ -105,15 +105,26 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FBoundsDamageEvent : public FDamageEvent
+struct FActionInformation 
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
-		float Multiplier;
+	FActionInformation() { Action = EUnitAction::None; Instigator = nullptr; Target = nullptr; Priority = 0; }
+	FActionInformation(EUnitAction UAction, AActor* UInstigator, AActor* UTarget, FVector UDestiny, int32 UPriority) 
+	{ Action = UAction; Instigator = UInstigator; Target = UTarget; Destiny = UDestiny; Priority = UPriority; }
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		EUnitAction Action;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		AActor* Instigator;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		AActor* Target;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		FVector Destiny;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		int32 Priority;
 };
 
 

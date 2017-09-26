@@ -10,6 +10,7 @@
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTreeComponent.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BlackboardComponent.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
+#include "Units/ActionsComponent.h"
 
 AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -44,6 +45,8 @@ AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer
 		BehaviorTree = Tree_BP.Object;
 	}
 
+	// Action queue
+	ActionsManager = CreateDefaultSubobject<UActionsComponent>(TEXT("ActionsManager"));
 }
 
 void AUnitAIController::Tick(float DeltaSeconds)
@@ -91,4 +94,22 @@ void AUnitAIController::DebugSeeingActors()
 			}
 		}
 	}	
+}
+
+void AUnitAIController::UpdateActionQueue()
+{
+	if (ActionsManager->ActionQueue.Num() >= 0)
+	{
+		if (BehaviorTree)
+		{
+			BlackboardComponent->SetValueAsBool(TEXT("bHasPendingActions"), true);
+		}
+	}
+	else
+	{
+		if (BehaviorTree)
+		{
+			BlackboardComponent->SetValueAsBool(TEXT("bHasPendingActions"), false);
+		}
+	}
 }

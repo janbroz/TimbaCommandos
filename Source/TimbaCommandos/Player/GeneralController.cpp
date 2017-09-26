@@ -11,6 +11,8 @@
 #include "Player/HUDWidget.h"
 #include "Items/Item.h"
 #include "Items/InventoryManager.h"
+#include "Units/UnitAIController.h"
+#include "Units/ActionsComponent.h"
 
 AGeneralController::AGeneralController()
 {
@@ -102,6 +104,8 @@ void AGeneralController::SetupInputComponent()
 	InputComponent->BindAction("Control", IE_Pressed, this, &AGeneralController::ToggleControl);
 	InputComponent->BindAction("Control", IE_Released, this, &AGeneralController::ToggleControl);
 	InputComponent->BindAction("ToggleInventory", IE_Pressed, this, &AGeneralController::ToggleInventory);
+	InputComponent->BindAction("ToggleQueue", IE_Pressed, this, &AGeneralController::ToggleQueue);
+	InputComponent->BindAction("ToggleQueue", IE_Released, this, &AGeneralController::ToggleQueue);
 
 	InputComponent->BindAxis("HorizontalMovement", this, &AGeneralController::HorizontalMov);
 	InputComponent->BindAxis("VerticalMovement", this, &AGeneralController::VerticalMov);
@@ -217,6 +221,24 @@ void AGeneralController::RightMousePressed()
 				AAIController* UnitController = Cast<AAIController>(Unit->GetController());
 				if (UnitController)
 				{
+					// Action queue stuff here!
+					AUnitAIController* AIUnitController = Cast<AUnitAIController>(Unit->GetController());
+					if (AIUnitController)
+					{
+						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
+						if (bQueueActions)
+						{
+							AIUnitController->ActionsManager->ActionQueue.Add(ActionInfo);
+						}
+						else
+						{
+							TArray<FActionInformation> TmpArray;
+							TmpArray.Add(ActionInfo);
+							AIUnitController->ActionsManager->ActionQueue = TmpArray;
+						}
+						AIUnitController->UpdateActionQueue();
+					}
+
 					UnitController->MoveToLocation(Hit.Location);
 				}
 			}
@@ -315,4 +337,9 @@ void AGeneralController::UpdateInventoryWidgets()
 		MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
 	}
 
+}
+
+void AGeneralController::ToggleQueue()
+{
+	bQueueActions = !bQueueActions;
 }

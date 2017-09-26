@@ -29,6 +29,9 @@ public:
 	UFUNCTION()
 		virtual void DebugSeeingActors();
 
+	UFUNCTION()
+		void UpdateActionQueue();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UAISenseConfig_Sight* SightConfig;
@@ -41,6 +44,7 @@ public:
 		UBlackboardComponent* BlackboardComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit AI")
 		class UBehaviorTreeComponent* BehaviorTreeComponent;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		class UActionsComponent* ActionsManager;
 
 };

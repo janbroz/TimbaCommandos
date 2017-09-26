@@ -9,6 +9,7 @@
 #include "Items/InventoryManager.h"
 #include "Units/StatsComponent.h"
 
+
 // Sets default values
 ABaseUnit::ABaseUnit()
 {
@@ -34,7 +35,6 @@ ABaseUnit::ABaseUnit()
 	// The stats manager
 	StatsManager = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsManager"));
 
-	
 }
 
 // Called when the game starts or when spawned
