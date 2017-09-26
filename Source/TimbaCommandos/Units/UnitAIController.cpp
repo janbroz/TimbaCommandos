@@ -98,10 +98,11 @@ void AUnitAIController::DebugSeeingActors()
 
 void AUnitAIController::UpdateActionQueue()
 {
-	if (ActionsManager->ActionQueue.Num() >= 0)
+	if (ActionsManager->ActionQueue.Num() > 0)
 	{
 		if (BehaviorTree)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Updated action manager yay"));
 			BlackboardComponent->SetValueAsBool(TEXT("bHasPendingActions"), true);
 		}
 	}
@@ -109,7 +110,22 @@ void AUnitAIController::UpdateActionQueue()
 	{
 		if (BehaviorTree)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Updated action manager nay"));
 			BlackboardComponent->SetValueAsBool(TEXT("bHasPendingActions"), false);
 		}
 	}
+}
+
+void AUnitAIController::InterruptActions(bool Interrupt)
+{
+	if (BehaviorTree)
+	{
+		BlackboardComponent->SetValueAsBool(TEXT("bInterruptedAction"), Interrupt);
+	}
+}
+
+bool AUnitAIController::GetIfInterrupted()
+{
+	bool Interrupted = BlackboardComponent->GetValueAsBool(TEXT("bInterruptedAction"));
+	return Interrupted;
 }

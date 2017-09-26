@@ -232,6 +232,8 @@ void AGeneralController::RightMousePressed()
 						}
 						else
 						{
+							AIUnitController->StopMovement();
+							AIUnitController->InterruptActions(true);
 							TArray<FActionInformation> TmpArray;
 							TmpArray.Add(ActionInfo);
 							AIUnitController->ActionsManager->ActionQueue = TmpArray;
@@ -239,7 +241,7 @@ void AGeneralController::RightMousePressed()
 						AIUnitController->UpdateActionQueue();
 					}
 
-					UnitController->MoveToLocation(Hit.Location);
+					//UnitController->MoveToLocation(Hit.Location);
 				}
 			}
 		}

@@ -32,6 +32,12 @@ public:
 	UFUNCTION()
 		void UpdateActionQueue();
 
+	UFUNCTION()
+		void InterruptActions(bool Interrupt);
+
+	UFUNCTION()
+		bool GetIfInterrupted();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UAISenseConfig_Sight* SightConfig;
