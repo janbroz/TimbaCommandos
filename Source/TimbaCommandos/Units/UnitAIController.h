@@ -38,6 +38,12 @@ public:
 	UFUNCTION()
 		bool GetIfInterrupted();
 
+	UFUNCTION()
+		void StopCurrentTask();
+
+	UFUNCTION()
+		void GetCurrentTaskState();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UAISenseConfig_Sight* SightConfig;

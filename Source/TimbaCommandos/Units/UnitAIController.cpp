@@ -129,3 +129,15 @@ bool AUnitAIController::GetIfInterrupted()
 	bool Interrupted = BlackboardComponent->GetValueAsBool(TEXT("bInterruptedAction"));
 	return Interrupted;
 }
+
+void AUnitAIController::StopCurrentTask()
+{
+	
+	InterruptActions(true);
+}
+
+void AUnitAIController::GetCurrentTaskState()
+{
+	
+
+}

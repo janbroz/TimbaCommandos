@@ -4,6 +4,7 @@
 #include "Player/PlayerPawn.h"
 #include "Units/BaseUnit.h"
 #include "Units/PlayerUnit.h"
+#include "Units/EnemyUnit.h"
 #include "Player/PlayerHUD.h"
 #include "AIController.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
@@ -210,6 +211,25 @@ void AGeneralController::RightMousePressed()
 		if (Hit.bBlockingHit)
 		{
 			AItem* ValidItem = Cast<AItem>(Hit.GetActor());
+			AEnemyUnit* EnemyUnit = Cast<AEnemyUnit>(Hit.GetActor());
+
+			// Check if it is a valid item and then queue the get item action
+			if (ValidItem)
+			{
+				APlayerUnit* ResponsibleUnit = SelectedUnits[0];
+				FActionInformation ActionInfo(EUnitAction::Take, ResponsibleUnit, ValidItem, Hit.Location, 0);
+				AUnitAIController* UnitController = Cast<AUnitAIController>(ResponsibleUnit->GetController());
+				if (bQueueActions)
+				{
+					UnitController->ActionsManager->ActionQueue.Add(ActionInfo);
+				}
+				else
+				{
+					UnitController->StopCurrentTask();
+
+				}
+			}
+
 			if (ValidItem && FVector::Dist(ValidItem->GetActorLocation(), SelectedUnits[0]->GetActorLocation()) < 250.f)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("The item is close to us man"));

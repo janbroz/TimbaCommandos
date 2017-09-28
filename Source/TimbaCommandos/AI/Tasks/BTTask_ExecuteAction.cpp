@@ -82,7 +82,7 @@ void UBTTask_ExecuteAction::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* N
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Yay, im interrupted"));
+			//UE_LOG(LogTemp, Warning, TEXT("Yay, im interrupted"));
 			AIController->ActionsManager->ActionQueue.RemoveAt(0);
 			AIController->UpdateActionQueue();
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);

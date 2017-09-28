@@ -43,6 +43,7 @@ enum class EUnitAction : uint8
 	Move				UMETA(DisplayName = "Move"),
 	Attack				UMETA(DisplayName = "Attack"),
 	Interact			UMETA(DisplayName = "Interact"),
+	Take				UMETA(DisplayName = "Take"),
 	None				UMETA(DisplayName = "None")
 };
 
