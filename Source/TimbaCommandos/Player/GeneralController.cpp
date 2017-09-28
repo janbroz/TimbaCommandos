@@ -214,54 +214,72 @@ void AGeneralController::RightMousePressed()
 			AEnemyUnit* EnemyUnit = Cast<AEnemyUnit>(Hit.GetActor());
 
 			// Check if it is a valid item and then queue the get item action
+			APlayerUnit* ResponsibleUnit = SelectedUnits[0];
+			AUnitAIController* UnitController = Cast<AUnitAIController>(ResponsibleUnit->GetController());
+
 			if (ValidItem)
 			{
-				APlayerUnit* ResponsibleUnit = SelectedUnits[0];
+				
 				FActionInformation ActionInfo(EUnitAction::Take, ResponsibleUnit, ValidItem, Hit.Location, 0);
-				AUnitAIController* UnitController = Cast<AUnitAIController>(ResponsibleUnit->GetController());
+				
 				if (bQueueActions)
 				{
-					UnitController->ActionsManager->ActionQueue.Add(ActionInfo);
+					UnitController->AddActionToQueue(ActionInfo, true);
 				}
 				else
 				{
-					UnitController->StopCurrentTask();
-
+					UnitController->AddActionToQueue(ActionInfo, false);
 				}
 			}
-
-			if (ValidItem && FVector::Dist(ValidItem->GetActorLocation(), SelectedUnits[0]->GetActorLocation()) < 250.f)
+			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("The item is close to us man"));
-				bool bSuccess = SelectedUnits[0]->InventoryManager->AddItem(ValidItem);
-			}
-
-			for (auto Unit : SelectedUnits)
-			{
-				AAIController* UnitController = Cast<AAIController>(Unit->GetController());
-				if (UnitController)
+				for (auto Unit : SelectedUnits)
 				{
-					// Action queue stuff here!
-					AUnitAIController* AIUnitController = Cast<AUnitAIController>(Unit->GetController());
-					if (AIUnitController)
+					AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+					if (AIController)
 					{
+						UE_LOG(LogTemp, Warning, TEXT("Hey you, what you gonna do!"));
 						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
+
 						if (bQueueActions)
 						{
-							AIUnitController->ActionsManager->ActionQueue.Add(ActionInfo);
+							AIController->AddActionToQueue(ActionInfo, true);
 						}
 						else
 						{
-							AIUnitController->StopMovement();
-							AIUnitController->InterruptActions(true);
-							TArray<FActionInformation> TmpArray;
-							TmpArray.Add(ActionInfo);
-							AIUnitController->ActionsManager->ActionQueue = TmpArray;
-						}
-						AIUnitController->UpdateActionQueue();
+							if (AIController->IsUnitActive())
+							{
+								AIController->InterruptActions(true);
+							}
+							AIController->AddActionToQueue(ActionInfo, false);
+							AIController->InterruptActions(false);
+						}	
 					}
 
-					//UnitController->MoveToLocation(Hit.Location);
+					if (UnitController)
+					{
+						
+
+						//// Action queue stuff here!
+						//AUnitAIController* AIUnitController = Cast<AUnitAIController>(Unit->GetController());
+						//if (AIUnitController)
+						//{
+						//	FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
+						//	if (bQueueActions)
+						//	{
+						//		AIUnitController->ActionsManager->ActionQueue.Add(ActionInfo);
+						//	}
+						//	else
+						//	{
+						//		AIUnitController->StopMovement();
+						//		AIUnitController->InterruptActions(true);
+						//		TArray<FActionInformation> TmpArray;
+						//		TmpArray.Add(ActionInfo);
+						//		AIUnitController->ActionsManager->ActionQueue = TmpArray;
+						//	}
+						//	AIUnitController->UpdateActionQueue();
+						//}
+					}
 				}
 			}
 		}

@@ -138,6 +138,34 @@ void AUnitAIController::StopCurrentTask()
 
 void AUnitAIController::GetCurrentTaskState()
 {
-	
+	if (BehaviorTree)
+	{
+		FString text = BehaviorTreeComponent->DescribeActiveTasks();
+		
+		UE_LOG(LogTemp, Warning, TEXT("The task description is: %d"), BehaviorTreeComponent->GetActiveInstanceIdx());
+		//BehaviorTreeComponent->DescribeActiveTasks();
+	}
+}
 
+void AUnitAIController::AddActionToQueue(FActionInformation ActionInfo, bool Stack)
+{
+	if (Stack)
+	{
+		ActionsManager->ActionQueue.Add(ActionInfo);
+	}
+	else
+	{
+		TArray<FActionInformation> TmpArray;
+		TmpArray.Add(ActionInfo);
+		ActionsManager->ActionQueue = TmpArray;
+	}
+	UpdateActionQueue();
+}
+
+bool AUnitAIController::IsUnitActive()
+{
+	bool Active = (uint8)EUnitAction::None != BlackboardComponent->GetValueAsEnum(TEXT("CurrentAction"));
+
+
+	return Active;
 }

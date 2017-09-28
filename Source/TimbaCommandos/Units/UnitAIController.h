@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "DataStructures.h"
 #include "UnitAIController.generated.h"
 
 /**
@@ -29,20 +30,26 @@ public:
 	UFUNCTION()
 		virtual void DebugSeeingActors();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void UpdateActionQueue();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void InterruptActions(bool Interrupt);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		bool GetIfInterrupted();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void StopCurrentTask();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void GetCurrentTaskState();
+
+	UFUNCTION(BlueprintCallable)
+		void AddActionToQueue(FActionInformation ActionInfo, bool Stack);
+
+	UFUNCTION(BlueprintCallable)
+		bool IsUnitActive();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")

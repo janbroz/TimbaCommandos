@@ -30,6 +30,7 @@ EBTNodeResult::Type UBTTask_ExecuteAction::ExecuteTask(UBehaviorTreeComponent& O
 
 				if (Action == EUnitAction::Move)
 				{
+					
 					AIController->MoveToLocation(EvaluatedAction.Destiny, 50.f);
 					NodeResult = EBTNodeResult::InProgress;
 				}
@@ -69,10 +70,17 @@ EBTNodeResult::Type UBTTask_ExecuteAction::ExecuteTask(UBehaviorTreeComponent& O
 
 void UBTTask_ExecuteAction::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	UE_LOG(LogTemp, Warning, TEXT("It is ticking"));
-
+	
+	//UE_LOG(LogTemp, Warning, TEXT("It is ticking"));
 	AActor* AIActor = OwnerComp.GetOwner();
 	AUnitAIController* AIController = Cast<AUnitAIController>(AIActor);
+
+	if (AIController)
+	{
+		
+		AIController->GetCurrentTaskState();
+	}
+
 	if (AIController && AIController->GetMoveStatus() == EPathFollowingStatus::Idle)
 	{
 		if (AIController->GetIfInterrupted())

@@ -40,11 +40,11 @@ enum class EStat : uint8
 UENUM(BlueprintType)
 enum class EUnitAction : uint8
 {
+	None				UMETA(DisplayName = "None"),
 	Move				UMETA(DisplayName = "Move"),
 	Attack				UMETA(DisplayName = "Attack"),
 	Interact			UMETA(DisplayName = "Interact"),
-	Take				UMETA(DisplayName = "Take"),
-	None				UMETA(DisplayName = "None")
+	Take				UMETA(DisplayName = "Take")
 };
 
 inline uint8 GetTypeHash(const EUnitClass A) { return (uint8)A; }
