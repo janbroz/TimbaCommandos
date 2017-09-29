@@ -210,6 +210,8 @@ void AGeneralController::RightMousePressed()
 
 		if (Hit.bBlockingHit)
 		{
+			// There is a lot of duplicated code. I think it is easier to read this way.
+			// Could be refactored later.
 			AItem* ValidItem = Cast<AItem>(Hit.GetActor());
 			AEnemyUnit* EnemyUnit = Cast<AEnemyUnit>(Hit.GetActor());
 
@@ -217,68 +219,76 @@ void AGeneralController::RightMousePressed()
 			APlayerUnit* ResponsibleUnit = SelectedUnits[0];
 			AUnitAIController* UnitController = Cast<AUnitAIController>(ResponsibleUnit->GetController());
 
-			if (ValidItem)
+			// We should check before if the player is trying to queue an action or replace the current one!
+			if (bQueueActions)
 			{
-				
-				FActionInformation ActionInfo(EUnitAction::Take, ResponsibleUnit, ValidItem, Hit.Location, 0);
-				
-				if (bQueueActions)
+				// The clicked actor is an item.
+				if (ValidItem)
 				{
+					FActionInformation ActionInfo(EUnitAction::Take, ResponsibleUnit, ValidItem, Hit.Location, 0);
 					UnitController->AddActionToQueue(ActionInfo, true);
 				}
-				else
-				{
-					UnitController->AddActionToQueue(ActionInfo, false);
+				// The clicked actor is an enemy.
+				else if (EnemyUnit)
+				{		
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						AIController->AddActionToQueue(ActionInfo, true);
+					}
 				}
+				// The clicked actor is something else.
+				else
+				{			
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						AIController->AddActionToQueue(ActionInfo, true);
+					}
+				}		
 			}
 			else
 			{
-				for (auto Unit : SelectedUnits)
+				if (ValidItem)
 				{
-					AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
-					if (AIController)
+					FActionInformation ActionInfo(EUnitAction::Take, ResponsibleUnit, ValidItem, Hit.Location, 0);
+					if (UnitController->IsUnitActive())
 					{
-						UE_LOG(LogTemp, Warning, TEXT("Hey you, what you gonna do!"));
-						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
-
-						if (bQueueActions)
-						{
-							AIController->AddActionToQueue(ActionInfo, true);
-						}
-						else
-						{
-							if (AIController->IsUnitActive())
-							{
-								AIController->InterruptActions(true);
-							}
-							AIController->AddActionToQueue(ActionInfo, false);
-							AIController->InterruptActions(false);
-						}	
+						UnitController->InterruptActions(true);
 					}
-
-					if (UnitController)
+					UnitController->AddActionToQueue(ActionInfo, false);
+					UnitController->InterruptActions(false);
+				}
+				// The clicked actor is an enemy.
+				else if (EnemyUnit)
+				{
+					for (auto Unit : SelectedUnits)
 					{
-						
-
-						//// Action queue stuff here!
-						//AUnitAIController* AIUnitController = Cast<AUnitAIController>(Unit->GetController());
-						//if (AIUnitController)
-						//{
-						//	FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
-						//	if (bQueueActions)
-						//	{
-						//		AIUnitController->ActionsManager->ActionQueue.Add(ActionInfo);
-						//	}
-						//	else
-						//	{
-						//		AIUnitController->StopMovement();
-						//		AIUnitController->InterruptActions(true);
-						//		TArray<FActionInformation> TmpArray;
-						//		TmpArray.Add(ActionInfo);
-						//		AIUnitController->ActionsManager->ActionQueue = TmpArray;
-						//	}
-						//	AIUnitController->UpdateActionQueue();
-						//}
+						FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						if (AIController->IsUnitActive())
+						{
+							AIController->InterruptActions(true);
+						}
+						AIController->AddActionToQueue(ActionInfo, false);
+						AIController->InterruptActions(false);
+					}
+				}
+				// The clicked actor is something else.
+				else
+				{
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						if (AIController->IsUnitActive())
+						{
+							AIController->InterruptActions(true);
+						}
+						AIController->AddActionToQueue(ActionInfo, false);
+						AIController->InterruptActions(false);
 					}
 				}
 			}

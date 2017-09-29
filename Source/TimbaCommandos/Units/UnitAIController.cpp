@@ -112,6 +112,7 @@ void AUnitAIController::UpdateActionQueue()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Updated action manager nay"));
 			BlackboardComponent->SetValueAsBool(TEXT("bHasPendingActions"), false);
+			BlackboardComponent->SetValueAsEnum(TEXT("CurrentAction"), (uint8)EUnitAction::None);
 		}
 	}
 }
@@ -174,6 +175,26 @@ void AUnitAIController::ChangeCurrentAction(EUnitAction Action)
 {
 	if (BehaviorTree)
 	{
-		BlackboardComponent->SetValueAsEnum(TEXT("CurrentAction"), (uint8)Action);
+		//BlackboardComponent->SetValueAsEnum(TEXT("CurrentAction"), (uint8)Action);
+		EUnitAction Tmp = ActionsManager->ActionQueue[0].Action;
+		BlackboardComponent->SetValueAsEnum(TEXT("CurrentAction"), (uint8)Tmp);
+	}
+}
+
+void AUnitAIController::UpdateTargetActor(AActor* NewTarget)
+{
+	if (BehaviorTree)
+	{
+		AActor* Tmp = ActionsManager->ActionQueue[0].Target;
+		BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), Tmp);
+	}
+}
+
+void AUnitAIController::UpdateTargetLocation(FVector NewLocation)
+{
+	if (BehaviorTree)
+	{
+		FVector Tmp = ActionsManager->ActionQueue[0].Destiny;
+		BlackboardComponent->SetValueAsVector(TEXT("TargetLocation"), Tmp);
 	}
 }

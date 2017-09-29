@@ -46,6 +46,7 @@ public:
 	void UpdateStatMin(EStat Stat, float Value);
 	void UpdateStatCurrent(EStat Stat, float Value);
 	void UpdateStatPercent(EStat Stat);
+	bool IsUnitAlive();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")

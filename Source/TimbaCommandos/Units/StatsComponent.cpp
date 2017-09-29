@@ -123,3 +123,14 @@ void UStatsComponent::ApplyDamage(float DamageAmount, FDamageEvent const& Damage
 	}
 
 }
+
+bool UStatsComponent::IsUnitAlive()
+{
+	bool Alive = false;
+	FStatInformation* Info = Stats.Find(EStat::Health);
+	if (Info)
+	{
+		Alive = Info->CurrentValue > Info->MinValue;
+	}
+	return Alive;
+}

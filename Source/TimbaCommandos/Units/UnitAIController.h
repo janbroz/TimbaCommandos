@@ -54,6 +54,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void ChangeCurrentAction(EUnitAction Action);
 
+	UFUNCTION(BlueprintCallable)
+		void UpdateTargetActor(AActor* NewTarget);
+	UFUNCTION(BlueprintCallable)
+		void UpdateTargetLocation(FVector NewLocation);
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UAISenseConfig_Sight* SightConfig;
