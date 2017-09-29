@@ -132,8 +132,8 @@ bool AUnitAIController::GetIfInterrupted()
 
 void AUnitAIController::StopCurrentTask()
 {
-	
-	InterruptActions(true);
+	ActionsManager->ActionQueue.RemoveAt(0);
+	//InterruptActions(true);
 }
 
 void AUnitAIController::GetCurrentTaskState()
@@ -168,4 +168,12 @@ bool AUnitAIController::IsUnitActive()
 
 
 	return Active;
+}
+
+void AUnitAIController::ChangeCurrentAction(EUnitAction Action)
+{
+	if (BehaviorTree)
+	{
+		BlackboardComponent->SetValueAsEnum(TEXT("CurrentAction"), (uint8)Action);
+	}
 }

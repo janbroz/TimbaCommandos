@@ -51,6 +51,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		bool IsUnitActive();
 
+	UFUNCTION(BlueprintCallable)
+		void ChangeCurrentAction(EUnitAction Action);
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UAISenseConfig_Sight* SightConfig;
