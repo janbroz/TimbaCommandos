@@ -210,6 +210,22 @@ void AGeneralController::RightMousePressed()
 
 		if (Hit.bBlockingHit)
 		{
+			for(auto Unit : SelectedUnits)
+			{
+				AUnitAIController* Controller = Cast<AUnitAIController>(Unit->GetController());
+				if (Controller)
+				{
+					//Controller->MoveToLocation(Hit.Location, 150.f);
+					FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
+					Controller->AddActionToQueue(ActionInfo, false);
+					Controller->InterruptActions(false);
+				}
+			}
+		}
+
+		/*
+		if (Hit.bBlockingHit)
+		{
 			// There is a lot of duplicated code. I think it is easier to read this way.
 			// Could be refactored later.
 			AItem* ValidItem = Cast<AItem>(Hit.GetActor());
@@ -293,6 +309,7 @@ void AGeneralController::RightMousePressed()
 				}
 			}
 		}
+		*/
 	}
 }
 
