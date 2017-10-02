@@ -6,6 +6,7 @@
 #include "Perception/AIPerceptionSystem.h"
 #include "Classes/Kismet/KismetSystemLibrary.h"
 #include "Units/BaseUnit.h"
+#include "Units/PlayerUnit.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTreeComponent.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BlackboardComponent.h"
@@ -38,7 +39,7 @@ void AEnemyAIController::DebugSeeingActors()
 	{
 		for (auto Actor : SensedActors)
 		{
-			ABaseUnit* Unit = Cast<ABaseUnit>(Actor);
+			APlayerUnit* Unit = Cast<APlayerUnit>(Actor);
 			if (Unit)
 			{
 				UKismetSystemLibrary::DrawDebugLine(GetWorld(), GetPawn()->GetActorLocation(), Actor->GetActorLocation(), FColor::Red, 0.03f, 2.f);

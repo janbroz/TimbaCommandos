@@ -11,6 +11,7 @@
 #include "Runtime/AIModule/Classes/BehaviorTree/BlackboardComponent.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
 #include "Units/ActionsComponent.h"
+#include "Runtime/Engine/Public/TimerManager.h"
 
 AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -47,6 +48,11 @@ AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer
 
 	// Action queue
 	ActionsManager = CreateDefaultSubobject<UActionsComponent>(TEXT("ActionsManager"));
+
+	// Attack and stuff
+	bCanAttack = true;
+	AttackCooldown = 4.f;
+
 }
 
 void AUnitAIController::Tick(float DeltaSeconds)
@@ -197,4 +203,31 @@ void AUnitAIController::UpdateTargetLocation(FVector NewLocation)
 		FVector Tmp = ActionsManager->ActionQueue[0].Destiny;
 		BlackboardComponent->SetValueAsVector(TEXT("TargetLocation"), Tmp);
 	}
+}
+
+AActor* AUnitAIController::GetTargetActor()
+{
+	AActor* Target = nullptr;
+	if (BehaviorTree)
+	{
+		Target = Cast<AActor>(BlackboardComponent->GetValueAsObject(TEXT("TargetActor")));
+	}
+	return Target;
+}
+
+void AUnitAIController::Attack(AActor* Target)
+{
+	if (Target)
+	{
+		Target->TakeDamage(10.f, FDamageEvent::FDamageEvent(), this, GetPawn());
+		bCanAttack = false;
+		GetWorldTimerManager().SetTimer(CooldownTimer, this, &AUnitAIController::ResetAttackCooldown, AttackCooldown, false);
+	}
+}
+
+void AUnitAIController::ResetAttackCooldown()
+{
+	bCanAttack = true;
+	UE_LOG(LogTemp, Warning, TEXT("Timer handler ticked here"));
+	UE_LOG(LogTemp, Warning, TEXT("Object is: %s"), *GetName());
 }

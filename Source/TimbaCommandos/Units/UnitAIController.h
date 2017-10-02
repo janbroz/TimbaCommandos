@@ -58,6 +58,13 @@ public:
 		void UpdateTargetActor(AActor* NewTarget);
 	UFUNCTION(BlueprintCallable)
 		void UpdateTargetLocation(FVector NewLocation);
+	UFUNCTION(BlueprintCallable)
+		AActor* GetTargetActor();
+	UFUNCTION(BlueprintCallable)
+		void Attack(AActor* Target);
+	UFUNCTION(BlueprintCallable)
+		void ResetAttackCooldown();
+
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
@@ -73,5 +80,13 @@ public:
 		class UBehaviorTreeComponent* BehaviorTreeComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UActionsComponent* ActionsManager;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		uint32 bCanAttack : 1;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		float AttackCooldown;
+	
+	FTimerHandle CooldownTimer;
+
 
 };

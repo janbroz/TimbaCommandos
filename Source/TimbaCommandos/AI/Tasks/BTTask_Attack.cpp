@@ -20,19 +20,25 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (UnitController)
 	{
 		Pawn = Cast<ABaseUnit>(UnitController->GetPawn());
-
+		Target = UnitController->GetTargetActor();
 	}
 	return Result;
 }
 
 void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack ticked"));
+	//UE_LOG(LogTemp, Warning, TEXT("Attack ticked"));
 	if (IsTargetAlive())
 	{
+		UnitController = Cast<AUnitAIController>(OwnerComp.GetOwner());
+		UE_LOG(LogTemp, Warning, TEXT("The unit attacking is: %s"), *UnitController->GetName());
+		if (UnitController->bCanAttack)
+		{
+			UnitController->Attack(Target);
+		}
 		// Do the attack logic here!
-		UE_LOG(LogTemp, Warning, TEXT("The unit should be attacking here"));
-
+		
+		//Target->TakeDamage(1.f, FDamageEvent::FDamageEvent(), UnitController, Pawn);
 
 
 	}
