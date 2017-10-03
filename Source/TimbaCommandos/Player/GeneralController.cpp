@@ -208,22 +208,7 @@ void AGeneralController::RightMousePressed()
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Camera, true, Hit);
 
-		if (Hit.bBlockingHit)
-		{
-			for(auto Unit : SelectedUnits)
-			{
-				AUnitAIController* Controller = Cast<AUnitAIController>(Unit->GetController());
-				if (Controller)
-				{
-					//Controller->MoveToLocation(Hit.Location, 150.f);
-					FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
-					Controller->AddActionToQueue(ActionInfo, false);
-					Controller->InterruptActions(false);
-				}
-			}
-		}
-
-		/*
+		
 		if (Hit.bBlockingHit)
 		{
 			// There is a lot of duplicated code. I think it is easier to read this way.
@@ -297,8 +282,10 @@ void AGeneralController::RightMousePressed()
 				{
 					for (auto Unit : SelectedUnits)
 					{
+						
 						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
 						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						AIController->MoveToLocation(Hit.Location, 150.f);
 						if (AIController->IsUnitActive())
 						{
 							AIController->InterruptActions(true);
@@ -309,7 +296,7 @@ void AGeneralController::RightMousePressed()
 				}
 			}
 		}
-		*/
+		
 	}
 }
 

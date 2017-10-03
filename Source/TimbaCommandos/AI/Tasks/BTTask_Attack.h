@@ -20,7 +20,8 @@ public:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	
 	bool IsTargetAlive();
-
+	bool GetInRange();
+	void AlignToTarget();
 
 public:
 	AActor* Target;

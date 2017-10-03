@@ -228,6 +228,6 @@ void AUnitAIController::Attack(AActor* Target)
 void AUnitAIController::ResetAttackCooldown()
 {
 	bCanAttack = true;
-	UE_LOG(LogTemp, Warning, TEXT("Timer handler ticked here"));
-	UE_LOG(LogTemp, Warning, TEXT("Object is: %s"), *GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Timer handler ticked here"));
+	//UE_LOG(LogTemp, Warning, TEXT("Object is: %s"), *GetName());
 }

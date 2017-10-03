@@ -28,24 +28,24 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Attack ticked"));
+	UnitController = Cast<AUnitAIController>(OwnerComp.GetOwner());
+	if (UnitController)
+	{
+		Pawn = Cast<ABaseUnit>(UnitController->GetPawn());
+		Target = UnitController->GetTargetActor();
+	}
+	
 	if (IsTargetAlive())
 	{
-		UnitController = Cast<AUnitAIController>(OwnerComp.GetOwner());
-		UE_LOG(LogTemp, Warning, TEXT("The unit attacking is: %s"), *UnitController->GetName());
-		if (UnitController->bCanAttack)
+		AlignToTarget();
+		if (GetInRange() && UnitController->bCanAttack)
 		{
 			UnitController->Attack(Target);
 		}
-		// Do the attack logic here!
-		
-		//Target->TakeDamage(1.f, FDamageEvent::FDamageEvent(), UnitController, Pawn);
-
-
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Target is dead, whaaaat"));
-
+		//UE_LOG(LogTemp, Warning, TEXT("Target is dead, whaaaat"));
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 }
@@ -59,4 +59,26 @@ bool UBTTask_Attack::IsTargetAlive()
 		Alive = Unit->StatsManager->IsUnitAlive();
 	}
 	return Alive;
+}
+
+
+bool UBTTask_Attack::GetInRange()
+{
+	const float Dist = FVector::Distance(Pawn->GetActorLocation(), Target->GetActorLocation());
+	UE_LOG(LogTemp, Warning, TEXT("Distance to target is: %f"), Dist);
+
+	if (Dist <= 700.f)
+	{
+		return true;
+	}
+	else
+	{
+		UnitController->MoveToActor(Target, 600.f);
+		return false;
+	}
+}
+
+void UBTTask_Attack::AlignToTarget()
+{
+
 }
