@@ -10,6 +10,8 @@
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTreeComponent.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BlackboardComponent.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
+#include "Units/ActionsComponent.h"
+#include "Runtime/Engine/Public/TimerManager.h"
 
 AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -43,6 +45,13 @@ AUnitAIController::AUnitAIController(const FObjectInitializer& ObjectInitializer
 	{
 		BehaviorTree = Tree_BP.Object;
 	}
+
+	// Action queue
+	ActionsManager = CreateDefaultSubobject<UActionsComponent>(TEXT("ActionsManager"));
+
+	// Attack and stuff
+	bCanAttack = true;
+	AttackCooldown = 4.f;
 
 }
 
@@ -91,4 +100,134 @@ void AUnitAIController::DebugSeeingActors()
 			}
 		}
 	}	
+}
+
+void AUnitAIController::UpdateActionQueue()
+{
+	if (ActionsManager->ActionQueue.Num() > 0)
+	{
+		if (BehaviorTree)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Updated action manager yay"));
+			BlackboardComponent->SetValueAsBool(TEXT("bHasPendingActions"), true);
+		}
+	}
+	else
+	{
+		if (BehaviorTree)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Updated action manager nay"));
+			BlackboardComponent->SetValueAsBool(TEXT("bHasPendingActions"), false);
+			BlackboardComponent->SetValueAsEnum(TEXT("CurrentAction"), (uint8)EUnitAction::None);
+		}
+	}
+}
+
+void AUnitAIController::InterruptActions(bool Interrupt)
+{
+	if (BehaviorTree)
+	{
+		BlackboardComponent->SetValueAsBool(TEXT("bInterruptedAction"), Interrupt);
+	}
+}
+
+bool AUnitAIController::GetIfInterrupted()
+{
+	bool Interrupted = BlackboardComponent->GetValueAsBool(TEXT("bInterruptedAction"));
+	return Interrupted;
+}
+
+void AUnitAIController::StopCurrentTask()
+{
+	ActionsManager->ActionQueue.RemoveAt(0);
+	//InterruptActions(true);
+}
+
+void AUnitAIController::GetCurrentTaskState()
+{
+	if (BehaviorTree)
+	{
+		FString text = BehaviorTreeComponent->DescribeActiveTasks();
+		
+		UE_LOG(LogTemp, Warning, TEXT("The task description is: %d"), BehaviorTreeComponent->GetActiveInstanceIdx());
+		//BehaviorTreeComponent->DescribeActiveTasks();
+	}
+}
+
+void AUnitAIController::AddActionToQueue(FActionInformation ActionInfo, bool Stack)
+{
+	if (Stack)
+	{
+		ActionsManager->ActionQueue.Add(ActionInfo);
+	}
+	else
+	{
+		TArray<FActionInformation> TmpArray;
+		TmpArray.Add(ActionInfo);
+		ActionsManager->ActionQueue = TmpArray;
+	}
+	UpdateActionQueue();
+}
+
+bool AUnitAIController::IsUnitActive()
+{
+	bool Active = (uint8)EUnitAction::None != BlackboardComponent->GetValueAsEnum(TEXT("CurrentAction"));
+
+
+	return Active;
+}
+
+void AUnitAIController::ChangeCurrentAction(EUnitAction Action)
+{
+	if (BehaviorTree)
+	{
+		//BlackboardComponent->SetValueAsEnum(TEXT("CurrentAction"), (uint8)Action);
+		EUnitAction Tmp = ActionsManager->ActionQueue[0].Action;
+		BlackboardComponent->SetValueAsEnum(TEXT("CurrentAction"), (uint8)Tmp);
+	}
+}
+
+void AUnitAIController::UpdateTargetActor(AActor* NewTarget)
+{
+	if (BehaviorTree)
+	{
+		AActor* Tmp = ActionsManager->ActionQueue[0].Target;
+		BlackboardComponent->SetValueAsObject(TEXT("TargetActor"), Tmp);
+	}
+}
+
+void AUnitAIController::UpdateTargetLocation(FVector NewLocation)
+{
+	if (BehaviorTree)
+	{
+		FVector Tmp = ActionsManager->ActionQueue[0].Destiny;
+		BlackboardComponent->SetValueAsVector(TEXT("TargetLocation"), Tmp);
+	}
+}
+
+AActor* AUnitAIController::GetTargetActor()
+{
+	AActor* Target = nullptr;
+	if (BehaviorTree)
+	{
+		Target = Cast<AActor>(BlackboardComponent->GetValueAsObject(TEXT("TargetActor")));
+	}
+	return Target;
+}
+
+void AUnitAIController::Attack(AActor* Target)
+{
+	if (Target)
+	{
+		Target->TakeDamage(10.f, FDamageEvent::FDamageEvent(), this, GetPawn());
+		bCanAttack = false;
+		GetWorldTimerManager().SetTimer(CooldownTimer, this, &AUnitAIController::ResetAttackCooldown, AttackCooldown, false);
+	}
+}
+
+void AUnitAIController::ResetAttackCooldown()
+{
+	bCanAttack = true;
+	//UE_LOG(LogTemp, Warning, TEXT("Timer handler ticked here"));
+	//UE_LOG(LogTemp, Warning, TEXT("Object is: %s"), *GetName());
 }

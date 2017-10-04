@@ -61,21 +61,21 @@ bool UInventoryManager::AddItem(AItem* Item)
 	// TODO, we need some logic to make sure the user can add the item to the inventory.
 	bool bSuccess = true;
 
-	if (FreeSlots > 0)
+	if (Item && FreeSlots > 0)
 	{
 		FItemInformation ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->StaticClass(), Item->Icon, ESlotState::Used);
 		int32 IndexToAdd = GetFirstEmptySlot();
 		Inventory[IndexToAdd] = ItemToAdd;
 		UpdatePlayerHUDInventory();
+		Item->bInInventory = true;
 		Item->Destroy();
-		FreeSlots--;
-		return bSuccess;
+		FreeSlots--;	
 	}
 	else
 	{
 		bSuccess = false;
-		return bSuccess;
 	}
+	return bSuccess;
 }
 
 bool UInventoryManager::RemoveItem(int32 Index)

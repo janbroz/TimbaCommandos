@@ -67,6 +67,9 @@ public:
 	// Update the inventory widget!
 	void UpdateInventoryWidgets();
 
+	// Make the player queue actions
+	void ToggleQueue();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		uint32 bPressingCtrl : 1;
@@ -74,6 +77,8 @@ public:
 		uint32 bDraggingMouse : 1;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		uint32 bShowingInventory : 1;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
+		uint32 bQueueActions : 1;
 	// Player can select either one or multiple units
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		TArray<class APlayerUnit*> SelectedUnits;

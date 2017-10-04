@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "DataStructures.h"
 #include "UnitAIController.generated.h"
 
 /**
@@ -29,6 +30,42 @@ public:
 	UFUNCTION()
 		virtual void DebugSeeingActors();
 
+	UFUNCTION(BlueprintCallable)
+		void UpdateActionQueue();
+
+	UFUNCTION(BlueprintCallable)
+		void InterruptActions(bool Interrupt);
+
+	UFUNCTION(BlueprintCallable)
+		bool GetIfInterrupted();
+
+	UFUNCTION(BlueprintCallable)
+		void StopCurrentTask();
+
+	UFUNCTION(BlueprintCallable)
+		void GetCurrentTaskState();
+
+	UFUNCTION(BlueprintCallable)
+		void AddActionToQueue(FActionInformation ActionInfo, bool Stack);
+
+	UFUNCTION(BlueprintCallable)
+		bool IsUnitActive();
+
+	UFUNCTION(BlueprintCallable)
+		void ChangeCurrentAction(EUnitAction Action);
+
+	UFUNCTION(BlueprintCallable)
+		void UpdateTargetActor(AActor* NewTarget);
+	UFUNCTION(BlueprintCallable)
+		void UpdateTargetLocation(FVector NewLocation);
+	UFUNCTION(BlueprintCallable)
+		AActor* GetTargetActor();
+	UFUNCTION(BlueprintCallable)
+		void Attack(AActor* Target);
+	UFUNCTION(BlueprintCallable)
+		void ResetAttackCooldown();
+
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UAISenseConfig_Sight* SightConfig;
@@ -41,6 +78,15 @@ public:
 		UBlackboardComponent* BlackboardComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit AI")
 		class UBehaviorTreeComponent* BehaviorTreeComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		class UActionsComponent* ActionsManager;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		uint32 bCanAttack : 1;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		float AttackCooldown;
+	
+	FTimerHandle CooldownTimer;
 
 
 };
