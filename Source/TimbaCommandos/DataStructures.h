@@ -24,16 +24,39 @@ enum class ESlotState : uint8
 	Used				UMETA(DisplayName = "Used")
 };
 
+UENUM(BlueprintType)
+enum class EStat : uint8
+{
+	Health				UMETA(DisplayName = "Health"),
+	Mana				UMETA(DisplayName = "Mana"),
+	Experience			UMETA(DisplayName = "Experience"),
+	Agility				UMETA(DisplayName = "Agility"),
+	Strength			UMETA(DisplayName = "Strength"),
+	Intellect			UMETA(DisplayName = "Intellect"),
+	Stamina				UMETA(DisplayName = "Stamina"),
+	None				UMETA(DisplayName = "None")
+};
+
+UENUM(BlueprintType)
+enum class EUnitAction : uint8
+{
+	None				UMETA(DisplayName = "None"),
+	Move				UMETA(DisplayName = "Move"),
+	Attack				UMETA(DisplayName = "Attack"),
+	Interact			UMETA(DisplayName = "Interact"),
+	Take				UMETA(DisplayName = "Take")
+};
+
 inline uint8 GetTypeHash(const EUnitClass A) { return (uint8)A; }
 inline uint8 GetTypeHash(const ESlotState A) { return (uint8)A; }
+inline uint8 GetTypeHash(const EStat A) { return (uint8)A; }
+inline uint8 GetTypeHash(const EUnitAction A) { return (uint8)A; }
 
 USTRUCT(BlueprintType)
 struct FItemInformation
 {
 	GENERATED_BODY()
 public:
-
-	
 
 	FItemInformation(FName NewName, FString NewDescription, float NewWeight, TSubclassOf<class AItem> NewClass, UTexture2D* NewIcon, ESlotState NewState)
 	{
@@ -62,6 +85,48 @@ public:
 		ESlotState State;
 };
 
+USTRUCT(BlueprintType)
+struct FStatInformation
+{
+	GENERATED_BODY()
+public:
+	FStatInformation(FName StatName) { Name = StatName;  MinValue = 0; MaxValue = 1; CurrentValue = 1; Percent = 1; }
+	FStatInformation() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		FName Name;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		float MinValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		float MaxValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		float CurrentValue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat information")
+		float Percent;
+};
+
+USTRUCT(BlueprintType)
+struct FActionInformation 
+{
+	GENERATED_BODY()
+
+public:
+	FActionInformation() { Action = EUnitAction::None; Instigator = nullptr; Target = nullptr; Priority = 0; }
+	FActionInformation(EUnitAction UAction, AActor* UInstigator, AActor* UTarget, FVector UDestiny, int32 UPriority) 
+	{ Action = UAction; Instigator = UInstigator; Target = UTarget; Destiny = UDestiny; Priority = UPriority; }
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		EUnitAction Action;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		AActor* Instigator;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		AActor* Target;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		FVector Destiny;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
+		int32 Priority;
+};
 
 
 class TIMBACOMMANDOS_API DataStructures

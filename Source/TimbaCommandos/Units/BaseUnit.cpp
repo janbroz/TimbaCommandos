@@ -7,6 +7,8 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Items/InventoryManager.h"
+#include "Units/StatsComponent.h"
+
 
 // Sets default values
 ABaseUnit::ABaseUnit()
@@ -29,6 +31,10 @@ ABaseUnit::ABaseUnit()
 
 	// The unit inventory
 	InventoryManager = CreateDefaultSubobject<UInventoryManager>(TEXT("Inventory manager"));
+
+	// The stats manager
+	StatsManager = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsManager"));
+
 }
 
 // Called when the game starts or when spawned
@@ -70,4 +76,14 @@ void ABaseUnit::SetUnitSelected(bool bSelected)
 UInventoryManager* ABaseUnit::GetInventoryManager() const
 {
 	return InventoryManager;
+}
+
+float ABaseUnit::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	StatsManager->ApplyDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	UE_LOG(LogTemp, Warning, TEXT("Ouch i took %f damage"), ActualDamage);
+
+	return ActualDamage;
 }

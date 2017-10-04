@@ -4,6 +4,7 @@
 #include "Player/PlayerPawn.h"
 #include "Units/BaseUnit.h"
 #include "Units/PlayerUnit.h"
+#include "Units/EnemyUnit.h"
 #include "Player/PlayerHUD.h"
 #include "AIController.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
@@ -11,6 +12,8 @@
 #include "Player/HUDWidget.h"
 #include "Items/Item.h"
 #include "Items/InventoryManager.h"
+#include "Units/UnitAIController.h"
+#include "Units/ActionsComponent.h"
 
 AGeneralController::AGeneralController()
 {
@@ -102,6 +105,8 @@ void AGeneralController::SetupInputComponent()
 	InputComponent->BindAction("Control", IE_Pressed, this, &AGeneralController::ToggleControl);
 	InputComponent->BindAction("Control", IE_Released, this, &AGeneralController::ToggleControl);
 	InputComponent->BindAction("ToggleInventory", IE_Pressed, this, &AGeneralController::ToggleInventory);
+	InputComponent->BindAction("ToggleQueue", IE_Pressed, this, &AGeneralController::ToggleQueue);
+	InputComponent->BindAction("ToggleQueue", IE_Released, this, &AGeneralController::ToggleQueue);
 
 	InputComponent->BindAxis("HorizontalMovement", this, &AGeneralController::HorizontalMov);
 	InputComponent->BindAxis("VerticalMovement", this, &AGeneralController::VerticalMov);
@@ -203,24 +208,95 @@ void AGeneralController::RightMousePressed()
 		FHitResult Hit;
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Camera, true, Hit);
 
+		
 		if (Hit.bBlockingHit)
 		{
+			// There is a lot of duplicated code. I think it is easier to read this way.
+			// Could be refactored later.
 			AItem* ValidItem = Cast<AItem>(Hit.GetActor());
-			if (ValidItem && FVector::Dist(ValidItem->GetActorLocation(), SelectedUnits[0]->GetActorLocation()) < 250.f)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("The item is close to us man"));
-				bool bSuccess = SelectedUnits[0]->InventoryManager->AddItem(ValidItem);
-			}
+			AEnemyUnit* EnemyUnit = Cast<AEnemyUnit>(Hit.GetActor());
 
-			for (auto Unit : SelectedUnits)
+			// Check if it is a valid item and then queue the get item action
+			APlayerUnit* ResponsibleUnit = SelectedUnits[0];
+			AUnitAIController* UnitController = Cast<AUnitAIController>(ResponsibleUnit->GetController());
+
+			// We should check before if the player is trying to queue an action or replace the current one!
+			if (bQueueActions)
 			{
-				AAIController* UnitController = Cast<AAIController>(Unit->GetController());
-				if (UnitController)
+				// The clicked actor is an item.
+				if (ValidItem)
 				{
-					UnitController->MoveToLocation(Hit.Location);
+					FActionInformation ActionInfo(EUnitAction::Take, ResponsibleUnit, ValidItem, Hit.Location, 0);
+					UnitController->AddActionToQueue(ActionInfo, true);
+				}
+				// The clicked actor is an enemy.
+				else if (EnemyUnit)
+				{		
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						AIController->AddActionToQueue(ActionInfo, true);
+					}
+				}
+				// The clicked actor is something else.
+				else
+				{			
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						AIController->AddActionToQueue(ActionInfo, true);
+					}
+				}		
+			}
+			else
+			{
+				if (ValidItem)
+				{
+					FActionInformation ActionInfo(EUnitAction::Take, ResponsibleUnit, ValidItem, Hit.Location, 0);
+					if (UnitController->IsUnitActive())
+					{
+						UnitController->InterruptActions(true);
+					}
+					UnitController->AddActionToQueue(ActionInfo, false);
+					UnitController->InterruptActions(false);
+				}
+				// The clicked actor is an enemy.
+				else if (EnemyUnit)
+				{
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						if (AIController->IsUnitActive())
+						{
+							AIController->InterruptActions(true);
+						}
+						AIController->AddActionToQueue(ActionInfo, false);
+						AIController->InterruptActions(false);
+					}
+				}
+				// The clicked actor is something else.
+				else
+				{
+					for (auto Unit : SelectedUnits)
+					{
+						
+						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						AIController->MoveToLocation(Hit.Location, 150.f);
+						if (AIController->IsUnitActive())
+						{
+							AIController->InterruptActions(true);
+						}
+						AIController->AddActionToQueue(ActionInfo, false);
+						AIController->InterruptActions(false);
+					}
 				}
 			}
 		}
+		
 	}
 }
 
@@ -315,4 +391,9 @@ void AGeneralController::UpdateInventoryWidgets()
 		MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
 	}
 
+}
+
+void AGeneralController::ToggleQueue()
+{
+	bQueueActions = !bQueueActions;
 }
