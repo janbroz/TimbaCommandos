@@ -62,6 +62,11 @@ void UStatsComponent::InitializeStats()
 
 	FStatInformation Intellect = FStatInformation(TEXT("Intellect"));
 	Stats.Add(EStat::Intellect, Intellect);
+
+	Experience = FStatInformation(TEXT("Experience"));
+	Experience.MaxValue = 200.f;
+	Level = FStatInformation(TEXT("Level"));
+	Level.MaxValue = 20.f;
 }
 
 void UStatsComponent::UpdatePercents()
@@ -133,4 +138,27 @@ bool UStatsComponent::IsUnitAlive()
 		Alive = Info->CurrentValue > Info->MinValue;
 	}
 	return Alive;
+}
+
+void UStatsComponent::GainExperience(float Amount)
+{
+	float TotalExperience = Experience.CurrentValue + Amount;
+	if (TotalExperience >= Experience.MaxValue)
+	{
+		float ExcedingExperience = TotalExperience - Experience.MaxValue;
+		GainLevel();
+		GainExperience(ExcedingExperience);
+	}
+	else
+	{
+		Experience.CurrentValue = TotalExperience;
+	}
+}
+
+void UStatsComponent::GainLevel()
+{
+	float NewExperienceCap = Experience.MaxValue * 1.1f;
+	Experience.MaxValue = NewExperienceCap;
+	Experience.CurrentValue = 0.f;
+	Level.CurrentValue++;
 }

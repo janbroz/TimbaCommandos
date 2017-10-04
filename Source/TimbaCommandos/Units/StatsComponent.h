@@ -46,10 +46,19 @@ public:
 	void UpdateStatMin(EStat Stat, float Value);
 	void UpdateStatCurrent(EStat Stat, float Value);
 	void UpdateStatPercent(EStat Stat);
-	bool IsUnitAlive();
+	UFUNCTION(BlueprintCallable)
+		bool IsUnitAlive();
+	UFUNCTION(BlueprintCallable)
+		void GainExperience(float Amount);
+	UFUNCTION(BlueprintCallable)
+		void GainLevel();
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		TMap<EStat, FStatInformation> Stats;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+		FStatInformation Experience;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+		FStatInformation Level;
+
 };

@@ -80,5 +80,9 @@ bool UBTTask_Attack::GetInRange()
 
 void UBTTask_Attack::AlignToTarget()
 {
+	// This does an instantaneus rotation. If we want the unit to have rotation speed
+	// into account we should use a lerp.
+	FRotator NewRot = (Target->GetActorLocation() - Pawn->GetActorLocation()).Rotation();
+	Pawn->SetActorRotation(NewRot);
 
 }
