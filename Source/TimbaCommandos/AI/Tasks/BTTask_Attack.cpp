@@ -65,7 +65,7 @@ bool UBTTask_Attack::IsTargetAlive()
 bool UBTTask_Attack::GetInRange()
 {
 	const float Dist = FVector::Distance(Pawn->GetActorLocation(), Target->GetActorLocation());
-	UE_LOG(LogTemp, Warning, TEXT("Distance to target is: %f"), Dist);
+	//UE_LOG(LogTemp, Warning, TEXT("Distance to target is: %f"), Dist);
 
 	if (Dist <= 700.f)
 	{

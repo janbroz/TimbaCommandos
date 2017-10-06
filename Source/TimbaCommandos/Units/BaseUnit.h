@@ -35,6 +35,9 @@ public:
 	// Actor takes damage
 	float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+	// Actor is killed
+	void SetActorKilled();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UInventoryManager* InventoryManager;

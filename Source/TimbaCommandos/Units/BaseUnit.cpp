@@ -3,6 +3,7 @@
 #include "BaseUnit.h"
 #include "Units/UnitAIController.h"
 #include "Components/DecalComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Perception/AIPerceptionSystem.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
@@ -50,7 +51,7 @@ void ABaseUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
+	UE_LOG(LogTemp, Warning, TEXT("Im alive, tralalala: %s"), *GetName());
 	
 }
 
@@ -86,4 +87,13 @@ float ABaseUnit::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	UE_LOG(LogTemp, Warning, TEXT("Ouch i took %f damage"), ActualDamage);
 
 	return ActualDamage;
+}
+
+void ABaseUnit::SetActorKilled()
+{
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
+	SetActorTickEnabled(false);
+	DetachFromControllerPendingDestroy();
+	//PrimaryActorTick.bCanEverTick = false;
 }

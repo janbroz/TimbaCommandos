@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "StatsComponent.h"
-
+#include "Units/BaseUnit.h"
 
 // Sets default values for this component's properties
 UStatsComponent::UStatsComponent(const FObjectInitializer& ObjectInitializer)
@@ -125,6 +125,12 @@ void UStatsComponent::ApplyDamage(float DamageAmount, FDamageEvent const& Damage
 	if (ModifiedStat->CurrentValue <= ModifiedStat->MinValue)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Im dying"));
+		ABaseUnit* Pawn = Cast<ABaseUnit>(GetOwner());
+		if (Pawn)
+		{
+			Pawn->SetActorKilled();
+		}
+		//Pawn->Destroy();
 	}
 
 }
