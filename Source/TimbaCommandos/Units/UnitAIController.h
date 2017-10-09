@@ -64,7 +64,8 @@ public:
 		void Attack(AActor* Target);
 	UFUNCTION(BlueprintCallable)
 		void ResetAttackCooldown();
-
+	UFUNCTION(BlueprintCallable)
+		bool IsUnitAlive();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")

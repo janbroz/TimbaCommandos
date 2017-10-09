@@ -6,6 +6,7 @@
 #include "Perception/AIPerceptionSystem.h"
 #include "Classes/Kismet/KismetSystemLibrary.h"
 #include "Units/BaseUnit.h"
+#include "Units/StatsComponent.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTreeComponent.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BlackboardComponent.h"
@@ -230,4 +231,15 @@ void AUnitAIController::ResetAttackCooldown()
 	bCanAttack = true;
 	//UE_LOG(LogTemp, Warning, TEXT("Timer handler ticked here"));
 	//UE_LOG(LogTemp, Warning, TEXT("Object is: %s"), *GetName());
+}
+
+bool AUnitAIController::IsUnitAlive()
+{
+	ABaseUnit* Pawn = Cast<ABaseUnit>(GetPawn());
+	bool bIsAlive = false;
+	if (Pawn)
+	{
+		bIsAlive = Pawn->StatsManager->IsUnitAlive();
+	}
+	return bIsAlive;
 }

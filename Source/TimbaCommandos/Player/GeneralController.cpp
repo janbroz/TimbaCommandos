@@ -231,12 +231,24 @@ void AGeneralController::RightMousePressed()
 				}
 				// The clicked actor is an enemy.
 				else if (EnemyUnit)
-				{		
-					for (auto Unit : SelectedUnits)
+				{
+					if (EnemyUnit->IsUnitAlive())
 					{
-						FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
-						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
-						AIController->AddActionToQueue(ActionInfo, true);
+						for (auto Unit : SelectedUnits)
+						{
+							FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
+							AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+							AIController->AddActionToQueue(ActionInfo, true);
+						}
+					}
+					else
+					{
+						for (auto Unit : SelectedUnits)
+						{
+							FActionInformation ActionInfo(EUnitAction::Interact, Unit, EnemyUnit, Hit.Location, 0);
+							AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+							AIController->AddActionToQueue(ActionInfo, true);
+						}
 					}
 				}
 				// The clicked actor is something else.
@@ -265,9 +277,11 @@ void AGeneralController::RightMousePressed()
 				// The clicked actor is an enemy.
 				else if (EnemyUnit)
 				{
+					FActionInformation ActionInfo;
 					for (auto Unit : SelectedUnits)
 					{
-						FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
+						ActionInfo = EnemyUnit->IsUnitAlive() ? FActionInformation(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0) :
+							FActionInformation(EUnitAction::Interact, Unit, EnemyUnit, Hit.Location, 0);
 						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
 						if (AIController->IsUnitActive())
 						{
