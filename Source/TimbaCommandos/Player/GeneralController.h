@@ -93,4 +93,6 @@ public:
 		class UHUDWidget* MainHUD;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		TSubclassOf<class UHUDWidget> MainHUDClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
+		AActor* InteractableActor;
 };

@@ -38,6 +38,9 @@ public:
 	// Actor is killed
 	void SetActorKilled();
 
+	// Mama, i just klled a man!
+	bool IsUnitAlive();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UInventoryManager* InventoryManager;

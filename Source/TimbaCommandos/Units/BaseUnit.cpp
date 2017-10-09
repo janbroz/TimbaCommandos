@@ -51,7 +51,7 @@ void ABaseUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UE_LOG(LogTemp, Warning, TEXT("Im alive, tralalala: %s"), *GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Im alive, tralalala: %s"), *GetName());
 	
 }
 
@@ -96,4 +96,9 @@ void ABaseUnit::SetActorKilled()
 	SetActorTickEnabled(false);
 	DetachFromControllerPendingDestroy();
 	//PrimaryActorTick.bCanEverTick = false;
+}
+
+bool ABaseUnit::IsUnitAlive()
+{
+	return StatsManager->IsUnitAlive();
 }

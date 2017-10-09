@@ -143,6 +143,8 @@ bool UStatsComponent::IsUnitAlive()
 	{
 		Alive = Info->CurrentValue > Info->MinValue;
 	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("Am i alive?: %s"), Alive ? TEXT("true") : TEXT("false"));
 	return Alive;
 }
 
