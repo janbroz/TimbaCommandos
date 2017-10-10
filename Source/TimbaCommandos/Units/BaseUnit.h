@@ -30,7 +30,9 @@ public:
 	void SetUnitSelected(bool bSelected);
 
 	// Implement the storage interface function
-	virtual UInventoryManager* GetInventoryManager() const override;
+	//UFUNCTION(BlueprintCallable, Category = "Storage interface implementation")
+	UFUNCTION(BlueprintCallable, Category = "Storage interface implementation")
+		virtual UInventoryManager* GetInventoryManager() const override;
 
 	// Actor takes damage
 	float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;

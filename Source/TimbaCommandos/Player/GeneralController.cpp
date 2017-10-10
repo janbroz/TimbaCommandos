@@ -75,7 +75,17 @@ void AGeneralController::RectangleDrag()
 					}
 					if (bShowingInventory)
 					{
-						MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+						//TArray<FScriptInterface<IHasStorageActor>> StorageActors;
+						TArray<TScriptInterface<IHasStorageActor>> TUnits;
+						for (auto Unit : SelectedUnits)
+						{
+							TScriptInterface<IHasStorageActor> TmpUnit; // = Cast<IHasStorageActor>(Unit);
+							TmpUnit.SetObject(Unit);
+							TUnits.Add(TmpUnit);
+						}
+						//TUnits.Add(InteractableActor);
+						MainHUD->ShowInventory(TUnits, bShowingInventory);
+						//MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
 					}
 				}
 				
@@ -154,7 +164,15 @@ void AGeneralController::LeftMousePressed()
 		MainHUD->UpdateSelectedUnits(SelectedUnits);
 		if (bShowingInventory)
 		{
-			MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+			//MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+			TArray<TScriptInterface<IHasStorageActor>> TUnits;
+			for (auto Unit : SelectedUnits)
+			{
+				TScriptInterface<IHasStorageActor> TmpUnit; // = Cast<IHasStorageActor>(Unit);
+				TmpUnit.SetObject(Unit);
+				TUnits.Add(TmpUnit);
+			}
+			MainHUD->ShowInventory(TUnits, bShowingInventory);
 		}
 	}
 }
@@ -415,7 +433,22 @@ void AGeneralController::UpdateInventoryWidgets()
 {
 	if (MainHUD)
 	{
-		MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+		//MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+		TArray<TScriptInterface<IHasStorageActor>> TUnits;
+		for (auto Unit : SelectedUnits)
+		{
+			TScriptInterface<IHasStorageActor> TmpUnit; // = Cast<IHasStorageActor>(Unit);
+			TmpUnit.SetObject(Unit);
+			TUnits.Add(TmpUnit);
+		}
+		if (InteractableActor)
+		{
+			TScriptInterface<IHasStorageActor> TmpUnit;
+			TmpUnit.SetObject(InteractableActor);
+			TUnits.Add(TmpUnit);
+		}
+		
+		MainHUD->ShowInventory(TUnits, bShowingInventory);
 	}
 
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "DataStructures.h"
+#include "Items/HasStorageActor.h"
 #include "InventoryManager.generated.h"
 
 
@@ -51,7 +52,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SwapItem(int32 IndexFrom, int32 IndexTo);
 	UFUNCTION(BlueprintCallable)
-		bool TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit);
+		bool TransferItem(int32 IndexFrom, int32 IndexTo, TScriptInterface<IHasStorageActor> const & FromUnit);
 
 	int32 GetSize(ESlotState Slot);
 

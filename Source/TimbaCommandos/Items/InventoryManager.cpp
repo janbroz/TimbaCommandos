@@ -150,35 +150,44 @@ void UInventoryManager::SwapItem(int32 IndexFrom, int32 IndexTo)
 	UpdatePlayerHUDInventory();
 }
 
-bool UInventoryManager::TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit)
+bool UInventoryManager::TransferItem(int32 IndexFrom, int32 IndexTo, TScriptInterface<IHasStorageActor> const & FromUnit)
 {
 	// Aditionally, it needs to check the distance between the actors.
 	// and it needs to be a bool!
 
 	bool bTransferSuccessful = false;
 
-	float DistanceBetweenActors = GetOwner()->GetDistanceTo(FromUnit);
+	AActor* StorageActor = Cast<AActor>(FromUnit.GetObject());
+	float DistanceBetweenActors = GetOwner()->GetDistanceTo(StorageActor);
 
-	if (DistanceBetweenActors < TRANSFER_DISTANCE)
+	if (StorageActor && DistanceBetweenActors < TRANSFER_DISTANCE)
 	{
-		int32 FromSize = GetSize(FromUnit->InventoryManager->Inventory[IndexFrom].State);
+		UE_LOG(LogTemp, Warning, TEXT("This should be doing something"));
+		UE_LOG(LogTemp, Warning, TEXT("From is: %s"), *StorageActor->GetName());
+		
+		//int32 FromSize = GetSize(FromUnit->GetInventoryManager()->Inventory[IndexFrom].State);
+		/*int32 FromSize = GetSize(FromUnit->GetInventoryManager()->Inventory[IndexFrom].State);
 		int32 ToSize = GetSize(Inventory[IndexTo].State);
 
 		UE_LOG(LogTemp, Warning, TEXT("From is: %d"), FromSize);
 		UE_LOG(LogTemp, Warning, TEXT("To is: %d"), ToSize);
 
 		FItemInformation TmpItem = Inventory[IndexTo];
-		Inventory[IndexTo] = FromUnit->InventoryManager->Inventory[IndexFrom];
-		FromUnit->InventoryManager->Inventory[IndexFrom] = TmpItem;
+		Inventory[IndexTo] = FromUnit->GetInventoryManager()->Inventory[IndexFrom];
+		FromUnit->GetInventoryManager()->Inventory[IndexFrom] = TmpItem;
 
-		FromUnit->InventoryManager->FreeSlots += FromSize;
-		FromUnit->InventoryManager->FreeSlots -= ToSize;
+		FromUnit->GetInventoryManager()->FreeSlots += FromSize;
+		FromUnit->GetInventoryManager()->FreeSlots -= ToSize;
 		FreeSlots += ToSize;
 		FreeSlots -= FromSize;
 
 		UpdatePlayerHUDInventory();
 
-		bTransferSuccessful = true;
+		bTransferSuccessful = true;*/
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Something fucked up here"));
 	}
 	return bTransferSuccessful;
 }
