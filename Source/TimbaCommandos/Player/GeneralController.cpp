@@ -14,6 +14,7 @@
 #include "Items/InventoryManager.h"
 #include "Units/UnitAIController.h"
 #include "Units/ActionsComponent.h"
+#include "Items/HasStorageActor.h"
 
 AGeneralController::AGeneralController()
 {
@@ -219,6 +220,7 @@ void AGeneralController::RightMousePressed()
 			// Check if it is a valid item and then queue the get item action
 			APlayerUnit* ResponsibleUnit = SelectedUnits[0];
 			AUnitAIController* UnitController = Cast<AUnitAIController>(ResponsibleUnit->GetController());
+			IHasStorageActor* StorageActor = Cast<IHasStorageActor>(Hit.GetActor());
 
 			// We should check before if the player is trying to queue an action or replace the current one!
 			if (bQueueActions)
@@ -275,13 +277,12 @@ void AGeneralController::RightMousePressed()
 					UnitController->InterruptActions(false);
 				}
 				// The clicked actor is an enemy.
-				else if (EnemyUnit)
+				else if (EnemyUnit && EnemyUnit->IsUnitAlive())
 				{
-					FActionInformation ActionInfo;
+					
 					for (auto Unit : SelectedUnits)
 					{
-						ActionInfo = EnemyUnit->IsUnitAlive() ? FActionInformation(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0) :
-							FActionInformation(EUnitAction::Interact, Unit, EnemyUnit, Hit.Location, 0);
+						FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
 						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
 						if (AIController->IsUnitActive())
 						{
@@ -292,11 +293,24 @@ void AGeneralController::RightMousePressed()
 					}
 				}
 				// The clicked actor is something else.
+				else if (StorageActor)
+				{
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::Interact, Unit, Hit.GetActor(), Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						if (AIController->IsUnitActive())
+						{
+							AIController->InterruptActions(true);
+						}
+						AIController->AddActionToQueue(ActionInfo, false);
+						AIController->InterruptActions(false);
+					}
+				}
 				else
 				{
 					for (auto Unit : SelectedUnits)
 					{
-						
 						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
 						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
 						AIController->MoveToLocation(Hit.Location, 150.f);
@@ -310,7 +324,6 @@ void AGeneralController::RightMousePressed()
 				}
 			}
 		}
-		
 	}
 }
 
