@@ -74,10 +74,15 @@ void ABaseUnit::SetUnitSelected(bool bSelected)
 	}
 }
 
-UInventoryManager* ABaseUnit::GetInventoryManager() const
+UInventoryManager* ABaseUnit::GetInventoryManager_Implementation() const
 {
 	return InventoryManager;
 }
+
+//bool ABaseUnit::ReactToHighNoon_Implementation()
+//{
+//	return true;
+//}
 
 float ABaseUnit::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {

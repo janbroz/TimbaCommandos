@@ -159,31 +159,34 @@ bool UInventoryManager::TransferItem(int32 IndexFrom, int32 IndexTo, TScriptInte
 
 	AActor* StorageActor = Cast<AActor>(FromUnit.GetObject());
 	float DistanceBetweenActors = GetOwner()->GetDistanceTo(StorageActor);
+	IHasStorageActor* TheInterface = Cast<IHasStorageActor>(StorageActor);
 
-	if (StorageActor && DistanceBetweenActors < TRANSFER_DISTANCE)
+	if (TheInterface && DistanceBetweenActors < TRANSFER_DISTANCE)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("This should be doing something"));
-		UE_LOG(LogTemp, Warning, TEXT("From is: %s"), *StorageActor->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("This should be doing something"));
+		//UE_LOG(LogTemp, Warning, TEXT("From is: %s"), *StorageActor->GetName());
+		//TheInterface->Execute_GetInventoryManager(StorageActor);
+		//FromUnit->Execute_GetInventoryManager();
+
 		
-		//int32 FromSize = GetSize(FromUnit->GetInventoryManager()->Inventory[IndexFrom].State);
-		/*int32 FromSize = GetSize(FromUnit->GetInventoryManager()->Inventory[IndexFrom].State);
+		int32 FromSize = GetSize(TheInterface->Execute_GetInventoryManager(StorageActor)->Inventory[IndexFrom].State);
 		int32 ToSize = GetSize(Inventory[IndexTo].State);
 
-		UE_LOG(LogTemp, Warning, TEXT("From is: %d"), FromSize);
-		UE_LOG(LogTemp, Warning, TEXT("To is: %d"), ToSize);
+		//UE_LOG(LogTemp, Warning, TEXT("From is: %d"), FromSize);
+		//UE_LOG(LogTemp, Warning, TEXT("To is: %d"), ToSize);
 
 		FItemInformation TmpItem = Inventory[IndexTo];
-		Inventory[IndexTo] = FromUnit->GetInventoryManager()->Inventory[IndexFrom];
-		FromUnit->GetInventoryManager()->Inventory[IndexFrom] = TmpItem;
+		Inventory[IndexTo] = TheInterface->Execute_GetInventoryManager(StorageActor)->Inventory[IndexFrom];
+		TheInterface->Execute_GetInventoryManager(StorageActor)->Inventory[IndexFrom] = TmpItem;
 
-		FromUnit->GetInventoryManager()->FreeSlots += FromSize;
-		FromUnit->GetInventoryManager()->FreeSlots -= ToSize;
+		TheInterface->Execute_GetInventoryManager(StorageActor)->FreeSlots += FromSize;
+		TheInterface->Execute_GetInventoryManager(StorageActor)->FreeSlots -= ToSize;
 		FreeSlots += ToSize;
 		FreeSlots -= FromSize;
 
 		UpdatePlayerHUDInventory();
 
-		bTransferSuccessful = true;*/
+		bTransferSuccessful = true;
 	}
 	else
 	{

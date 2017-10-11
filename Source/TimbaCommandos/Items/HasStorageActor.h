@@ -10,7 +10,7 @@
 
 class UInventoryManager;
 // This class does not need to be modified.
-UINTERFACE(meta = (CannotImplementInterfaceInBlueprint))
+UINTERFACE(BlueprintType)
 class UHasStorageActor : public UInterface
 {
 	GENERATED_BODY()
@@ -26,7 +26,8 @@ class TIMBACOMMANDOS_API IHasStorageActor
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	//UFUNCTION(BlueprintCallable, Category = "Storage interface implementation")
-	UFUNCTION(BlueprintCallable, Category = "Storage interface implementation")
-		virtual UInventoryManager* GetInventoryManager() const = 0;
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage interface implementation")
+		UInventoryManager* GetInventoryManager() const;
+
 	
 };

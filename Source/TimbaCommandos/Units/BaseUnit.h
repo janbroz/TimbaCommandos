@@ -31,8 +31,13 @@ public:
 
 	// Implement the storage interface function
 	//UFUNCTION(BlueprintCallable, Category = "Storage interface implementation")
-	UFUNCTION(BlueprintCallable, Category = "Storage interface implementation")
-		virtual UInventoryManager* GetInventoryManager() const override;
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage interface implementation")
+		UInventoryManager* GetInventoryManager() const;
+		virtual UInventoryManager* GetInventoryManager_Implementation() const override;
+
+	/*UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "MyCategory")
+		bool ReactToHighNoon();
+		virtual bool ReactToHighNoon_Implementation() override;*/
 
 	// Actor takes damage
 	float TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
