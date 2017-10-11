@@ -28,6 +28,6 @@ public:
 	//UFUNCTION(BlueprintCallable, Category = "Storage interface implementation")
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage interface implementation")
 		UInventoryManager* GetInventoryManager() const;
-
-	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage interface implementation")
+		UTexture2D* GetPortrait() const;
 };

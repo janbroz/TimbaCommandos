@@ -24,7 +24,7 @@ EBTNodeResult::Type UBTTask_Interact::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		AActor* Enemy = Action.Target;
 		if (Enemy)
 		{
-			Controller->MoveToActor(Enemy, 150.f);
+			Controller->MoveToActor(Enemy, 120.f);
 		}
 
 	}
@@ -44,12 +44,15 @@ void UBTTask_Interact::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 		ABaseUnit* Pawn = Cast<ABaseUnit>(UnitController->GetPawn());
 		AActor* Target = UnitController->GetTargetActor();
 
-		if (FVector::Dist(Pawn->GetActorLocation(), Target->GetActorLocation()) < 160.f)
+		const float Distance = FVector::Dist(Pawn->GetActorLocation(), Target->GetActorLocation());
+		UE_LOG(LogTemp, Warning, TEXT("Distance is: %f"), Distance);
+		if (Distance < 160.f)
 		{
 			AGeneralController* PlayerController = Cast<AGeneralController>(GetWorld()->GetFirstPlayerController());
 			if (PlayerController)
 			{
 				PlayerController->InteractableActor = Target;
+				PlayerController->UpdateInventoryWidgets();
 			}
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}

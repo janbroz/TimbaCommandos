@@ -79,6 +79,11 @@ UInventoryManager* ABaseUnit::GetInventoryManager_Implementation() const
 	return InventoryManager;
 }
 
+UTexture2D* ABaseUnit::GetPortrait_Implementation() const
+{
+	return UnitPortrait;
+}
+
 //bool ABaseUnit::ReactToHighNoon_Implementation()
 //{
 //	return true;

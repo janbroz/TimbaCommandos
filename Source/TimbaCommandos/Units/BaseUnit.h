@@ -34,7 +34,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage interface implementation")
 		UInventoryManager* GetInventoryManager() const;
 		virtual UInventoryManager* GetInventoryManager_Implementation() const override;
-
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Storage interface implementation")
+		UTexture2D* GetPortrait() const;
+		virtual UTexture2D* GetPortrait_Implementation() const;
 	/*UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "MyCategory")
 		bool ReactToHighNoon();
 		virtual bool ReactToHighNoon_Implementation() override;*/

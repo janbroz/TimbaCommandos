@@ -83,6 +83,12 @@ void AGeneralController::RectangleDrag()
 							TmpUnit.SetObject(Unit);
 							TUnits.Add(TmpUnit);
 						}
+						if (InteractableActor)
+						{
+							TScriptInterface<IHasStorageActor> TmpUnit;
+							TmpUnit.SetObject(InteractableActor);
+							TUnits.Add(TmpUnit);
+						}
 						//TUnits.Add(InteractableActor);
 						MainHUD->ShowInventory(TUnits, bShowingInventory);
 						//MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
@@ -170,6 +176,12 @@ void AGeneralController::LeftMousePressed()
 			{
 				TScriptInterface<IHasStorageActor> TmpUnit; // = Cast<IHasStorageActor>(Unit);
 				TmpUnit.SetObject(Unit);
+				TUnits.Add(TmpUnit);
+			}
+			if (InteractableActor)
+			{
+				TScriptInterface<IHasStorageActor> TmpUnit;
+				TmpUnit.SetObject(InteractableActor);
 				TUnits.Add(TmpUnit);
 			}
 			MainHUD->ShowInventory(TUnits, bShowingInventory);
