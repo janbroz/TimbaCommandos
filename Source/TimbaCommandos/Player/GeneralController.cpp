@@ -138,6 +138,8 @@ void AGeneralController::LeftMousePressed()
 	GetMousePosition(Init.X, Init.Y);
 	End = Init;
 
+	InteractableActor = nullptr;
+
 	APlayerHUD* PlayerHUD = Cast<APlayerHUD>(GetHUD());
 	if (PlayerHUD)
 	{
