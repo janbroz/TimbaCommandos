@@ -53,6 +53,8 @@ public:
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
+		class UAbilitiesComponent* AbilitiesManager;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UInventoryManager* InventoryManager;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Unit variables")
 		class UStatsComponent* StatsManager;

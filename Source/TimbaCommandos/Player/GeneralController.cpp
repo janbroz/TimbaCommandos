@@ -14,6 +14,7 @@
 #include "Items/InventoryManager.h"
 #include "Units/UnitAIController.h"
 #include "Units/ActionsComponent.h"
+#include "Units/AbilitiesComponent.h"
 #include "Items/HasStorageActor.h"
 
 AGeneralController::AGeneralController()
@@ -124,6 +125,10 @@ void AGeneralController::SetupInputComponent()
 	InputComponent->BindAction("ToggleInventory", IE_Pressed, this, &AGeneralController::ToggleInventory);
 	InputComponent->BindAction("ToggleQueue", IE_Pressed, this, &AGeneralController::ToggleQueue);
 	InputComponent->BindAction("ToggleQueue", IE_Released, this, &AGeneralController::ToggleQueue);
+	InputComponent->BindAction("AbilitySlot1", IE_Pressed, this, &AGeneralController::Ability1Pressed);
+	InputComponent->BindAction("AbilitySlot2", IE_Pressed, this, &AGeneralController::Ability2Pressed);
+	InputComponent->BindAction("AbilitySlot3", IE_Pressed, this, &AGeneralController::Ability3Pressed);
+	InputComponent->BindAction("AbilitySlot4", IE_Pressed, this, &AGeneralController::Ability4Pressed);
 
 	InputComponent->BindAxis("HorizontalMovement", this, &AGeneralController::HorizontalMov);
 	InputComponent->BindAxis("VerticalMovement", this, &AGeneralController::VerticalMov);
@@ -357,6 +362,33 @@ void AGeneralController::RightMousePressed()
 			}
 		}
 	}
+}
+
+void AGeneralController::Ability1Pressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 1"));
+	
+	for (auto Unit : SelectedUnits)
+	{
+		Unit->AbilitiesManager->UseAbilityAtSlot(0);
+	}
+
+	
+}
+
+void AGeneralController::Ability2Pressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 2"));
+}
+
+void AGeneralController::Ability3Pressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 3"));
+}
+
+void AGeneralController::Ability4Pressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 4"));
 }
 
 void AGeneralController::VerticalMov(float Amount)

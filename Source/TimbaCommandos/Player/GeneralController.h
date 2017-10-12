@@ -70,6 +70,20 @@ public:
 	// Make the player queue actions
 	void ToggleQueue();
 
+	// TODO - Player should be able to bind abilities to different keys.
+	// Cast The first ability.
+	UFUNCTION(BlueprintCallable, Category = "Ability cast")
+		void Ability1Pressed();
+	// Cast The second ability.
+	UFUNCTION(BlueprintCallable, Category = "Ability cast")
+		void Ability2Pressed();
+	// Cast The third ability.
+	UFUNCTION(BlueprintCallable, Category = "Ability cast")
+		void Ability3Pressed();
+	// Cast The forth ability.
+	UFUNCTION(BlueprintCallable, Category = "Ability cast")
+		void Ability4Pressed();
+
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		uint32 bPressingCtrl : 1;

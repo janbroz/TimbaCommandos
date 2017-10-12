@@ -9,7 +9,7 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Items/InventoryManager.h"
 #include "Units/StatsComponent.h"
-
+#include "Units/AbilitiesComponent.h"
 
 // Sets default values
 ABaseUnit::ABaseUnit()
@@ -36,6 +36,8 @@ ABaseUnit::ABaseUnit()
 	// The stats manager
 	StatsManager = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsManager"));
 
+	// Abilities manager
+	AbilitiesManager = CreateDefaultSubobject<UAbilitiesComponent>(TEXT("AbilitiesManager"));
 }
 
 // Called when the game starts or when spawned
