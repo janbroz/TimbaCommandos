@@ -2,6 +2,7 @@
 
 #include "Ability.h"
 #include "Runtime/Engine/Public/TimerManager.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 AAbility::AAbility()
@@ -15,6 +16,13 @@ AAbility::AAbility()
 	bCanBeUsed = true;
 	BaseCooldown = 2.f;
 	CurrentCooldown = BaseCooldown;
+
+	AbilityRadious = 256.f;
+	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision sphere"));
+	CollisionSphere->SetupAttachment(RootComponent);
+	CollisionSphere->InitSphereRadius(AbilityRadious);
+	//CollisionSphere->bHiddenInGame = false;
+
 }
 
 // Called when the game starts or when spawned
@@ -43,6 +51,7 @@ void AAbility::UseAbility()
 		UE_LOG(LogTemp, Warning, TEXT("Holi, me usaron!"));
 		bCanBeUsed = false;
 		GetWorldTimerManager().SetTimer(CooldownHandler, this, &AAbility::ResetCooldown, CurrentCooldown, false, CurrentCooldown);
+		CollisionSphere->bHiddenInGame = !CollisionSphere->bHiddenInGame;
 	}
 	else
 	{

@@ -32,6 +32,9 @@ public:
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		USceneComponent* AbilityTransform;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
+		class USphereComponent* CollisionSphere;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		uint32 bIsPassive : 1;
@@ -43,6 +46,8 @@ public:
 		float BaseCooldown;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		float CurrentCooldown;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
+		float AbilityRadious;
 
 	FTimerHandle CooldownHandler;
 
