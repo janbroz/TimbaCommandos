@@ -3,6 +3,8 @@
 #include "Ability.h"
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "Components/SphereComponent.h"
+#include "Units/BaseUnit.h"
+#include "Units/StatsComponent.h"
 
 // Sets default values
 AAbility::AAbility()
@@ -30,6 +32,11 @@ void AAbility::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (bIsPassive && TickInterval > 0.f)
+	{
+		GetWorldTimerManager().SetTimer(TickHandler, this, &AAbility::ApplyEffect, TickInterval, true);
+	}
+
 }
 
 // Called every frame
@@ -37,16 +44,16 @@ void AAbility::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bIsPassive)
+	/*if (bIsPassive)
 	{
 		UseAbility();
-	}
+	}*/
 
 }
 
 void AAbility::UseAbility()
 {
-	if (bCanBeUsed)
+	if (bCanBeUsed && !bIsPassive)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Holi, me usaron!"));
 		bCanBeUsed = false;
@@ -63,4 +70,15 @@ void AAbility::UseAbility()
 void AAbility::ResetCooldown()
 {
 	bCanBeUsed = true;
+}
+
+void AAbility::ApplyEffect_Implementation() const
+{
+	UE_LOG(LogTemp, Warning, TEXT("Passive ticked! from: %s"), GetOwner());
+	ABaseUnit* Instigator = Cast<ABaseUnit>(GetOwner());
+	if (Instigator)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Instigator is valid!"));
+		Instigator->StatsManager->UpdateStatCurrent(EStat::Health, 1.f);
+	}
 }

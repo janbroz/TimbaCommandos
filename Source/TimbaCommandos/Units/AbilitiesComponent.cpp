@@ -21,10 +21,24 @@ void UAbilitiesComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	// First create the abilities that the user defined for the unit.
+	for (auto AbilityClass : AbilityClasses)
+	{
+		AAbility* AbilityFromClass = GetWorld()->SpawnActor<AAbility>(AbilityClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), FActorSpawnParameters());
+		if (AbilityFromClass)
+		{
+			Abilities.Add(AbilityFromClass);
+			AbilityFromClass->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
+			AbilityFromClass->SetOwner(GetOwner());
+		}
+		
+		
+	}
+
 	AAbility* NewAbility =  GetWorld()->SpawnActor<AAbility>(GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(),FActorSpawnParameters());
 	Abilities.Add(NewAbility);
 	NewAbility->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
+	NewAbility->SetOwner(GetOwner());
 }
 
 

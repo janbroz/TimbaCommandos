@@ -26,9 +26,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	// Use the ability
 	UFUNCTION(BlueprintCallable, Category = "Ability functions")
-		void UseAbility();
+		virtual void UseAbility();
 
-	void ResetCooldown();
+	// Reset the cd
+	UFUNCTION(BlueprintCallable, Category = "Ability functions")
+		virtual void ResetCooldown();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ability functions")
+		void ApplyEffect() const;
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		USceneComponent* AbilityTransform;
@@ -36,19 +40,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		class USphereComponent* CollisionSphere;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		uint32 bIsPassive : 1;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		uint32 bCanBeUsed : 1;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		float TickInterval;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		float BaseCooldown;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		float CurrentCooldown;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		float AbilityRadious;
 
 	FTimerHandle CooldownHandler;
+	FTimerHandle TickHandler;
 
 };

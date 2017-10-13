@@ -33,7 +33,9 @@ public:
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		FString AbilityName;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Ability variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability variables")
 		TArray<class AAbility*> Abilities;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability variables")
+		TArray<TSubclassOf<class AAbility>> AbilityClasses;
 	
 };

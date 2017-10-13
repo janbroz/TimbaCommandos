@@ -41,9 +41,7 @@ void AGeneralController::BeginPlay()
 		{
 			MainHUD->AddToViewport();
 		}
-
 	}
-
 }
 
 void AGeneralController::Tick(float DeltaSeconds)
@@ -379,16 +377,31 @@ void AGeneralController::Ability1Pressed()
 void AGeneralController::Ability2Pressed()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 2"));
+
+	for (auto Unit : SelectedUnits)
+	{
+		Unit->AbilitiesManager->UseAbilityAtSlot(1);
+	}
 }
 
 void AGeneralController::Ability3Pressed()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 3"));
+
+	for (auto Unit : SelectedUnits)
+	{
+		Unit->AbilitiesManager->UseAbilityAtSlot(2);
+	}
 }
 
 void AGeneralController::Ability4Pressed()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 4"));
+
+	for (auto Unit : SelectedUnits)
+	{
+		Unit->AbilitiesManager->UseAbilityAtSlot(3);
+	}
 }
 
 void AGeneralController::VerticalMov(float Amount)

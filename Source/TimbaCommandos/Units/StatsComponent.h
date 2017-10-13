@@ -44,8 +44,10 @@ public:
 	// Update Stat values
 	void UpdateStatMax(EStat Stat, float Value);
 	void UpdateStatMin(EStat Stat, float Value);
-	void UpdateStatCurrent(EStat Stat, float Value);
-	void UpdateStatPercent(EStat Stat);
+	UFUNCTION(BlueprintCallable)
+		void UpdateStatCurrent(EStat Stat, float Value);
+	UFUNCTION(BlueprintCallable)
+		void UpdateStatPercent(EStat Stat);
 	UFUNCTION(BlueprintCallable)
 		bool IsUnitAlive();
 	UFUNCTION(BlueprintCallable)
