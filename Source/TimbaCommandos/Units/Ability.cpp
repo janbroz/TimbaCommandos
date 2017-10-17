@@ -74,11 +74,11 @@ void AAbility::ResetCooldown()
 
 void AAbility::ApplyEffect_Implementation() const
 {
-	UE_LOG(LogTemp, Warning, TEXT("Passive ticked! from: %s"), GetOwner());
+	/*UE_LOG(LogTemp, Warning, TEXT("Passive ticked! from: %s"), GetOwner());
 	ABaseUnit* Instigator = Cast<ABaseUnit>(GetOwner());
 	if (Instigator)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Instigator is valid!"));
 		Instigator->StatsManager->UpdateStatCurrent(EStat::Health, 1.f);
-	}
+	}*/
 }

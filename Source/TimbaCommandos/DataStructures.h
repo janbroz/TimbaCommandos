@@ -45,6 +45,7 @@ enum class EUnitAction : uint8
 	Move				UMETA(DisplayName = "Move"),
 	Attack				UMETA(DisplayName = "Attack"),
 	Interact			UMETA(DisplayName = "Interact"),
+	NPC_Interact		UMETA(DisplayName = "NPC interact"),
 	Take				UMETA(DisplayName = "Take")
 };
 

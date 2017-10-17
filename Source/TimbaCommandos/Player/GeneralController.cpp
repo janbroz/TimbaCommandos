@@ -5,6 +5,7 @@
 #include "Units/BaseUnit.h"
 #include "Units/PlayerUnit.h"
 #include "Units/EnemyUnit.h"
+#include "Units/NPCUnit.h"
 #include "Player/PlayerHUD.h"
 #include "AIController.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
@@ -251,7 +252,7 @@ void AGeneralController::RightMousePressed()
 			// Could be refactored later.
 			AItem* ValidItem = Cast<AItem>(Hit.GetActor());
 			AEnemyUnit* EnemyUnit = Cast<AEnemyUnit>(Hit.GetActor());
-
+			ANPCUnit* NPCUnit = Cast<ANPCUnit>(Hit.GetActor());
 			// Check if it is a valid item and then queue the get item action
 			APlayerUnit* ResponsibleUnit = SelectedUnits[0];
 			AUnitAIController* UnitController = Cast<AUnitAIController>(ResponsibleUnit->GetController());
@@ -288,6 +289,10 @@ void AGeneralController::RightMousePressed()
 						}
 					}
 				}
+				else if (NPCUnit)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Clicked an npc"));
+				}
 				// The clicked actor is something else.
 				else
 				{			
@@ -318,6 +323,21 @@ void AGeneralController::RightMousePressed()
 					for (auto Unit : SelectedUnits)
 					{
 						FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						if (AIController->IsUnitActive())
+						{
+							AIController->InterruptActions(true);
+						}
+						AIController->AddActionToQueue(ActionInfo, false);
+						AIController->InterruptActions(false);
+					}
+				}
+				else if (NPCUnit)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Clicked an npc one two three"));
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::NPC_Interact, Unit, Hit.GetActor(), Hit.Location, 0);
 						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
 						if (AIController->IsUnitActive())
 						{
