@@ -16,6 +16,8 @@ class TIMBACOMMANDOS_API ANPCUnit : public ABaseUnit
 public:
 	ANPCUnit();
 	
-	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog info")
+		TArray<FString> DialogOptions;
 	
 };

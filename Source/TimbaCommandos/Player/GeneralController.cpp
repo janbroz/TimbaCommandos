@@ -17,6 +17,7 @@
 #include "Units/ActionsComponent.h"
 #include "Units/AbilitiesComponent.h"
 #include "Items/HasStorageActor.h"
+#include "Widgets/DialogWidget.h"
 
 AGeneralController::AGeneralController()
 {
@@ -28,6 +29,12 @@ AGeneralController::AGeneralController()
 	if (PlayerHUD_BP.Object)
 	{
 		MainHUDClass = PlayerHUD_BP.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UClass> DialogHUD_BP(TEXT("/Game/UMG/Dialog/Dialog_BP.Dialog_BP_C"));
+	if (DialogHUD_BP.Object)
+	{
+		CurrentDialogClass = DialogHUD_BP.Object;
 	}
 }
 
@@ -535,4 +542,21 @@ void AGeneralController::UpdateInventoryWidgets()
 void AGeneralController::ToggleQueue()
 {
 	bQueueActions = !bQueueActions;
+}
+
+void AGeneralController::BeginDialog(TArray<FString> Dialog, UTexture2D* Portrait)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Someone is talking to us"));
+	if (CurrentDialogWidget)
+	{
+		CurrentDialogWidget->RemoveFromParent();
+	}
+	
+	CurrentDialogWidget = CreateWidget<UDialogWidget>(this, CurrentDialogClass);
+	CurrentDialogWidget->DialogOptions = Dialog;
+	CurrentDialogWidget->Portrait = Portrait;
+	CurrentDialogWidget->InitializeDialog();
+	CurrentDialogWidget->AddToViewport();
+	CurrentDialogWidget->SetDesiredSizeInViewport(FVector2D(400.f, 200.f));
+	CurrentDialogWidget->SetPositionInViewport(FVector2D(100.f, 100.f));
 }

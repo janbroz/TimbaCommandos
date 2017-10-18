@@ -70,6 +70,9 @@ public:
 	// Make the player queue actions
 	void ToggleQueue();
 
+	// Dialog with the NPCs
+	void BeginDialog(TArray<FString> Dialog, UTexture2D* Portrait);
+
 	// TODO - Player should be able to bind abilities to different keys.
 	// Cast The first ability.
 	UFUNCTION(BlueprintCallable, Category = "Ability cast")
@@ -109,4 +112,8 @@ public:
 		TSubclassOf<class UHUDWidget> MainHUDClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		AActor* InteractableActor;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
+		class UDialogWidget* CurrentDialogWidget;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
+		TSubclassOf<UDialogWidget> CurrentDialogClass;
 };

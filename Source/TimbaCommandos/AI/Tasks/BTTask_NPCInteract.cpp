@@ -3,6 +3,9 @@
 #include "BTTask_NPCInteract.h"
 #include "Units/UnitAIController.h"
 #include "Units/BaseUnit.h"
+#include "Units/NPCUnit.h"
+#include "Player/GeneralController.h"
+#include "Widgets/DialogWidget.h"
 
 UBTTask_NPCInteract::UBTTask_NPCInteract(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -37,6 +40,18 @@ void UBTTask_NPCInteract::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		else if (Distance < 200.f)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("We are close to the guy, lets talk!"));
+			APlayerController* PC = GetWorld()->GetFirstPlayerController();
+			AGeneralController* GC = Cast<AGeneralController>(PC);
+			if (GC)
+			{
+				//UDialogWidget* DialogWidget = CreateWidget<UDialogWidget>(GC, UDialogWidget::StaticClass());
+				ANPCUnit* Unit = Cast<ANPCUnit>(Target);
+				if (GC)
+				{
+					GC->BeginDialog(Unit->DialogOptions, Unit->UnitPortrait);
+				}	
+			}
+
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 	}
