@@ -130,6 +130,41 @@ public:
 		int32 Priority;
 };
 
+USTRUCT(BlueprintType)
+struct FDialogOption
+{
+	GENERATED_BODY()
+
+public:
+	FDialogOption() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		FString Text;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		int32 Id;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		int32 TargetId;
+};
+USTRUCT(BlueprintType)
+struct FDialogInformation
+{
+	GENERATED_BODY()
+
+public:
+	FDialogInformation() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		FString Name;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		FString DialogText;
+	// This id should be unique, cause we reference it from the FDialogOption
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		int32 DialogId;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		TArray<FDialogOption> Options;
+
+};
+
 
 class TIMBACOMMANDOS_API DataStructures
 {

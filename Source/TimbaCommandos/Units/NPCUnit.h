@@ -19,5 +19,7 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog info")
 		TArray<FString> DialogOptions;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog info")
+		TArray<FDialogInformation> DialogInfo;
 	
 };

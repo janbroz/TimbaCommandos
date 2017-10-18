@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "DataStructures.h"
 #include "GeneralController.generated.h"
 
 /**
@@ -71,7 +72,7 @@ public:
 	void ToggleQueue();
 
 	// Dialog with the NPCs
-	void BeginDialog(TArray<FString> Dialog, UTexture2D* Portrait);
+	void BeginDialog(TArray<FDialogInformation> Dialog, UTexture2D* Portrait);
 
 	// TODO - Player should be able to bind abilities to different keys.
 	// Cast The first ability.

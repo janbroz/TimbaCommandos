@@ -253,7 +253,8 @@ void AGeneralController::RightMousePressed()
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Camera, true, Hit);
 
 		
-		if (Hit.bBlockingHit)
+		if (Hit.bBlockingHit && !bShowingInventory) // This should be fixes ASAP
+			// We dont want the player to be able to click through the widgets.
 		{
 			// There is a lot of duplicated code. I think it is easier to read this way.
 			// Could be refactored later.
@@ -544,7 +545,7 @@ void AGeneralController::ToggleQueue()
 	bQueueActions = !bQueueActions;
 }
 
-void AGeneralController::BeginDialog(TArray<FString> Dialog, UTexture2D* Portrait)
+void AGeneralController::BeginDialog(TArray<FDialogInformation> Dialog, UTexture2D* Portrait)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Someone is talking to us"));
 	if (CurrentDialogWidget)

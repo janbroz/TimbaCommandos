@@ -48,7 +48,7 @@ void UBTTask_NPCInteract::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 				ANPCUnit* Unit = Cast<ANPCUnit>(Target);
 				if (GC)
 				{
-					GC->BeginDialog(Unit->DialogOptions, Unit->UnitPortrait);
+					GC->BeginDialog(Unit->DialogInfo, Unit->UnitPortrait);
 				}	
 			}
 

@@ -25,7 +25,7 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget information")
-		TArray<FString> DialogOptions;
+		TArray<FDialogInformation> DialogOptions;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget information")
 		UTexture2D* Portrait;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget information")
