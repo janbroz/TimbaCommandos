@@ -69,7 +69,7 @@ public:
 		Icon = NewIcon;
 		State = NewState;
 	}
-	FItemInformation() { State = ESlotState::Empty; ItemClass = nullptr; Icon = nullptr; }
+	FItemInformation() { State = ESlotState::Empty; ItemClass = nullptr; Icon = nullptr; Weight = 0.f; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
 		FName Name;

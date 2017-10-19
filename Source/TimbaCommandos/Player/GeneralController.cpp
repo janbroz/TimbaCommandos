@@ -149,7 +149,10 @@ void AGeneralController::LeftMousePressed()
 	GetMousePosition(Init.X, Init.Y);
 	End = Init;
 
-	InteractableActor = nullptr;
+	if (!bShowingInventory)
+	{
+		InteractableActor = nullptr;
+	}
 
 	APlayerHUD* PlayerHUD = Cast<APlayerHUD>(GetHUD());
 	if (PlayerHUD)
@@ -253,7 +256,7 @@ void AGeneralController::RightMousePressed()
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Camera, true, Hit);
 
 		
-		if (Hit.bBlockingHit && !bShowingInventory) // This should be fixes ASAP
+		if (Hit.bBlockingHit) // This should be fixes ASAP
 			// We dont want the player to be able to click through the widgets.
 		{
 			// There is a lot of duplicated code. I think it is easier to read this way.
