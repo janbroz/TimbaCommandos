@@ -63,7 +63,7 @@ bool UInventoryManager::AddItem(AItem* Item)
 
 	if (Item && FreeSlots > 0)
 	{
-		FItemInformation ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->StaticClass(), Item->Icon, ESlotState::Used);
+		FItemInformation ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used);
 		int32 IndexToAdd = GetFirstEmptySlot();
 		Inventory[IndexToAdd] = ItemToAdd;
 		UpdatePlayerHUDInventory();
@@ -81,7 +81,8 @@ bool UInventoryManager::AddItem(AItem* Item)
 bool UInventoryManager::RemoveItem(int32 Index)
 {
 	bool bSuccess = true;
-	Inventory.RemoveAt(Index);
+	FItemInformation EmptySlot = FItemInformation();
+	Inventory[Index] = EmptySlot;
 
 	return bSuccess;
 }

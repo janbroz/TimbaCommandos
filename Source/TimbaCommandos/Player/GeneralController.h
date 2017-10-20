@@ -66,7 +66,8 @@ public:
 	void ToggleInventory();
 
 	// Update the inventory widget!
-	void UpdateInventoryWidgets();
+	UFUNCTION(BlueprintCallable, Category = "HUD stuff")
+		void UpdateInventoryWidgets();
 
 	// Make the player queue actions
 	void ToggleQueue();
