@@ -6,6 +6,7 @@
 #include "Player/GeneralController.h"
 #include "Units/PlayerUnit.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values for this component's properties
 UInventoryManager::UInventoryManager()
@@ -230,7 +231,10 @@ void UInventoryManager::UseItemFromSlot(int32 Index)
 	if (ItemToUse.State == ESlotState::Used)
 	{
 		//AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(ItemToUse.ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), FActorSpawnParameters());
-		AItem* SpawnedItem = GetWorld()->SpawnActorDeferred<AItem>(ItemToUse.ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
+		FTransform Transf = FTransform(GetOwner()->GetActorRotation(), GetOwner()->GetActorLocation());
+		const AActor* Owner = GetOwner();
+		const APawn* Instigator = Cast<APawn>(Owner);
+		AItem* SpawnedItem = GetWorld()->SpawnActorDeferred<AItem>(ItemToUse.ItemClass, Transf, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 		if (SpawnedItem)
 		{
 			
@@ -247,6 +251,8 @@ void UInventoryManager::UseItemFromSlot(int32 Index)
 
 		if (SpawnedItem)
 		{
+			FVector ForwardImpulse = Owner->GetActorForwardVector() * 500.f + Owner->GetActorUpVector() * 1000.f;
+			SpawnedItem->ItemMesh->AddImpulse(ForwardImpulse);
 			bool bSuccessfulUse = SpawnedItem->UseItem(GetOwner());
 			if (bSuccessfulUse)
 			{

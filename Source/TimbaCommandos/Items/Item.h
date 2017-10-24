@@ -29,6 +29,9 @@ public:
 	void AddToInventory();
 	void RemoveFromInventory();
 
+	// Change the mass scale
+	void UpdateMassScale(float Value);
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Weird stuff")
 		bool UseItem(AActor* Target);
 	bool UseItem_Implementation(AActor* Target);
