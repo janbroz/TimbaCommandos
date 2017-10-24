@@ -45,3 +45,8 @@ void AItem::RemoveFromInventory()
 {
 
 }
+
+void AItem::UseItem_Implementation(AActor* Target)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Item was used!"));
+}

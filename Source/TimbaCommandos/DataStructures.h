@@ -68,8 +68,23 @@ public:
 		ItemClass = NewClass;
 		Icon = NewIcon;
 		State = NewState;
+		QuestTarget = nullptr;
 	}
 	FItemInformation() { State = ESlotState::Empty; ItemClass = nullptr; Icon = nullptr; Weight = 0.f; }
+
+	FItemInformation(FName NewName, FString NewDescription, float NewWeight, TSubclassOf<class AItem> NewClass, UTexture2D* NewIcon, ESlotState NewState,
+		bool bQuestItem, AActor* Target, float DistanceToUse)
+	{
+		Name = NewName;
+		Description = NewDescription;
+		Weight = NewWeight;
+		ItemClass = NewClass;
+		Icon = NewIcon;
+		State = NewState;
+		bIsQuestItem = bQuestItem;
+		QuestTarget = Target;
+		UsableDistance = DistanceToUse;
+	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
 		FName Name;
@@ -85,6 +100,14 @@ public:
 		UTexture2D* Icon;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
 		ESlotState State;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		bool bIsQuestItem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		bool bIsStackable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		AActor* QuestTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		float UsableDistance;
 };
 
 USTRUCT(BlueprintType)

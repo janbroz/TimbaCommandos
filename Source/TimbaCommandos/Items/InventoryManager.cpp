@@ -63,7 +63,15 @@ bool UInventoryManager::AddItem(AItem* Item)
 
 	if (Item && FreeSlots > 0)
 	{
-		FItemInformation ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used);
+		FItemInformation ItemToAdd;
+		if (Item->bIsQuestItem)
+		{
+			ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used, true, Item->QuestTarget, Item->UsableDistance);
+		}
+		else
+		{
+			ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used);
+		}
 		int32 IndexToAdd = GetFirstEmptySlot();
 		Inventory[IndexToAdd] = ItemToAdd;
 		UpdatePlayerHUDInventory();
@@ -210,5 +218,21 @@ int32 UInventoryManager::GetSize(ESlotState State)
 	default:
 		return 1;
 		break;
+	}
+}
+
+void UInventoryManager::UseItemFromSlot(int32 Index)
+{
+	FItemInformation ItemToUse = Inventory[Index];
+	
+	// Make sure the slot has a valid item
+	if (ItemToUse.State == ESlotState::Used)
+	{
+		AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(ItemToUse.ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), FActorSpawnParameters());
+		if (SpawnedItem)
+		{
+			RemoveItem(Index);
+			UpdatePlayerHUDInventory();
+		}
 	}
 }

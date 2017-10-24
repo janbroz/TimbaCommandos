@@ -14,6 +14,8 @@ class TIMBACOMMANDOS_API AItem : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AItem();
+	// When spawning an item from an item info struct.
+	//AItem()
 
 protected:
 	// Called when the game starts or when spawned
@@ -27,6 +29,9 @@ public:
 	void AddToInventory();
 	void RemoveFromInventory();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Weird stuff")
+		void UseItem(AActor* Target);
+	void UseItem_Implementation(AActor* Target);
 public:
 	// Item information.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInformation)
@@ -41,6 +46,14 @@ public:
 		float Weight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInformation)
 		uint32 bInInventory : 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInformation)
+		uint32 bCanBeStacked : 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		uint32 bIsQuestItem : 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		AActor* QuestTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		float UsableDistance;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = ItemInformation)
 		UStaticMeshComponent* ItemMesh;
 };

@@ -152,6 +152,7 @@ void AGeneralController::LeftMousePressed()
 	if (!bShowingInventory)
 	{
 		InteractableActor = nullptr;
+		UpdateInventoryWidgets();
 	}
 
 	APlayerHUD* PlayerHUD = Cast<APlayerHUD>(GetHUD());
@@ -535,7 +536,7 @@ void AGeneralController::UpdateInventoryWidgets()
 		{
 			TScriptInterface<IHasStorageActor> TmpUnit;
 			TmpUnit.SetObject(InteractableActor);
-			TUnits.Add(TmpUnit);
+			TUnits.AddUnique(TmpUnit);
 		}
 		
 		MainHUD->ShowInventory(TUnits, bShowingInventory);
