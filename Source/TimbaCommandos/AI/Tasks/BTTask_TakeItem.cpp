@@ -31,7 +31,7 @@ EBTNodeResult::Type UBTTask_TakeItem::ExecuteTask(UBehaviorTreeComponent& OwnerC
 			AItem* Item = Cast<AItem>(ItemTarget);
 			if (Item && !Item->bInInventory)
 			{
-				AIController->MoveToActor(ItemTarget, 150.f);
+				AIController->MoveToActor(ItemTarget, 100.f);
 			}
 			else
 			{
