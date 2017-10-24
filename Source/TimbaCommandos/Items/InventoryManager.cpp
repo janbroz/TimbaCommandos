@@ -231,8 +231,24 @@ void UInventoryManager::UseItemFromSlot(int32 Index)
 		AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(ItemToUse.ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), FActorSpawnParameters());
 		if (SpawnedItem)
 		{
-			RemoveItem(Index);
-			UpdatePlayerHUDInventory();
+			if (ItemToUse.bIsStackable)
+			{
+				if (ItemToUse.Amount > 1)
+				{
+					ItemToUse.Amount--;
+				}
+				else
+				{
+					RemoveItem(Index);
+				}
+			}
+			else
+			{
+				RemoveItem(Index);
+			}
+			SpawnedItem->UseItem(GetOwner());
 		}
+
+		UpdatePlayerHUDInventory();
 	}
 }
