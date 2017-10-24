@@ -30,8 +30,8 @@ public:
 	void RemoveFromInventory();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Weird stuff")
-		void UseItem(AActor* Target);
-	void UseItem_Implementation(AActor* Target);
+		bool UseItem(AActor* Target);
+	bool UseItem_Implementation(AActor* Target);
 public:
 	// Item information.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInformation)

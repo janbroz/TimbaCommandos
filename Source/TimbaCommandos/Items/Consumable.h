@@ -17,7 +17,7 @@ public:
 	AConsumable();
 	// We already defined the UseItem(Target) at our parent class, lets change its implementation
 	// to reflect that we are using a consumable!
-	void UseItem_Implementation(AActor* Target);
+	bool UseItem_Implementation(AActor* Target);
 	
 	// Some information to have in mind about the consumable:
 public:

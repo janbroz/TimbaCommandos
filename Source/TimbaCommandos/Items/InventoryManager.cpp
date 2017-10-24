@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "Player/GeneralController.h"
 #include "Units/PlayerUnit.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UInventoryManager::UInventoryManager()
@@ -228,27 +229,41 @@ void UInventoryManager::UseItemFromSlot(int32 Index)
 	// Make sure the slot has a valid item
 	if (ItemToUse.State == ESlotState::Used)
 	{
-		AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(ItemToUse.ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), FActorSpawnParameters());
+		//AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(ItemToUse.ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), FActorSpawnParameters());
+		AItem* SpawnedItem = GetWorld()->SpawnActorDeferred<AItem>(ItemToUse.ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
 		if (SpawnedItem)
 		{
-			if (ItemToUse.bIsStackable)
+			
+			
+			if (ItemToUse.bIsQuestItem)
 			{
-				if (ItemToUse.Amount > 1)
+				SpawnedItem->bIsQuestItem = ItemToUse.bIsQuestItem;
+				SpawnedItem->UsableDistance = ItemToUse.UsableDistance;
+				SpawnedItem->QuestTarget = ItemToUse.QuestTarget;
+			}
+			UGameplayStatics::FinishSpawningActor(SpawnedItem, FTransform(SpawnedItem->GetActorRotation(), SpawnedItem->GetActorLocation()));
+		}
+		
+
+		if (SpawnedItem)
+		{
+			bool bSuccessfulUse = SpawnedItem->UseItem(GetOwner());
+			if (bSuccessfulUse)
+			{
+				if (ItemToUse.bIsStackable)
 				{
 					ItemToUse.Amount--;
+					if (ItemToUse.Amount <= 0)
+					{
+						RemoveItem(Index);
+					}
 				}
 				else
 				{
 					RemoveItem(Index);
 				}
 			}
-			else
-			{
-				RemoveItem(Index);
-			}
-			SpawnedItem->UseItem(GetOwner());
 		}
-
 		UpdatePlayerHUDInventory();
 	}
 }

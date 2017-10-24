@@ -9,9 +9,11 @@ AConsumable::AConsumable()
 
 }
 
-void AConsumable::UseItem_Implementation(AActor* Target)
+bool AConsumable::UseItem_Implementation(AActor* Target)
 {
-	Super::UseItem_Implementation(Target);
+	
 
 	UE_LOG(LogTemp, Warning, TEXT("And also it was consumed!"));
+	bool bSuperCall = Super::UseItem_Implementation(Target);
+	return bSuperCall;
 }
