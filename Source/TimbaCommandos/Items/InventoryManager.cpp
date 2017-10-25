@@ -228,6 +228,9 @@ void UInventoryManager::UseItemFromSlot(int32 Index)
 	FItemInformation ItemToUse = Inventory[Index];
 	
 	// Make sure the slot has a valid item
+	// This one needs to be redone! Cause you know, this is a drop item.
+
+
 	if (ItemToUse.State == ESlotState::Used)
 	{
 		//AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(ItemToUse.ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), FActorSpawnParameters());
@@ -272,4 +275,31 @@ void UInventoryManager::UseItemFromSlot(int32 Index)
 		}
 		UpdatePlayerHUDInventory();
 	}
+}
+
+void UInventoryManager::DropItem(int32 Index)
+{
+	FItemInformation ItemToUse = Inventory[Index];
+	FTransform Transf = FTransform(GetOwner()->GetActorRotation(), GetOwner()->GetActorLocation());
+	const AActor* Owner = GetOwner();
+	const APawn* Instigator = Cast<APawn>(Owner);
+	AItem* SpawnedItem = GetWorld()->SpawnActorDeferred<AItem>(ItemToUse.ItemClass, Transf, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+	if (SpawnedItem)
+	{
+		if (ItemToUse.bIsQuestItem)
+		{
+			SpawnedItem->bIsQuestItem = ItemToUse.bIsQuestItem;
+			SpawnedItem->UsableDistance = ItemToUse.UsableDistance;
+			SpawnedItem->QuestTarget = ItemToUse.QuestTarget;
+		}
+		UGameplayStatics::FinishSpawningActor(SpawnedItem, FTransform(SpawnedItem->GetActorRotation(), SpawnedItem->GetActorLocation()));
+	}
+
+	if (SpawnedItem)
+	{
+		FVector ForwardImpulse = Owner->GetActorForwardVector() * 500.f + Owner->GetActorUpVector() * 1000.f;
+		SpawnedItem->ItemMesh->AddImpulse(ForwardImpulse);
+		RemoveItem(Index);
+	}
+	UpdatePlayerHUDInventory();
 }

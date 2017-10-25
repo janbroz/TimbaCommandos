@@ -55,6 +55,8 @@ public:
 		bool TransferItem(int32 IndexFrom, int32 IndexTo, TScriptInterface<IHasStorageActor> const & FromUnit);
 	UFUNCTION(BlueprintCallable)
 		void UseItemFromSlot(int32 Index);
+	UFUNCTION(BlueprintCallable)
+		void DropItem(int32 Index);
 
 	int32 GetSize(ESlotState Slot);
 
