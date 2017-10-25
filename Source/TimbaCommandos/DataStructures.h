@@ -69,8 +69,11 @@ public:
 		Icon = NewIcon;
 		State = NewState;
 		QuestTarget = nullptr;
+		UsableDistance = 0;
+		bIsQuestItem = false;
+		Amount = 1;
 	}
-	FItemInformation() { State = ESlotState::Empty; ItemClass = nullptr; Icon = nullptr; Weight = 0.f; }
+	FItemInformation() { State = ESlotState::Empty; ItemClass = nullptr; Icon = nullptr; Weight = 0.f; Amount = 0.f; QuestTarget = nullptr; }
 
 	FItemInformation(FName NewName, FString NewDescription, float NewWeight, TSubclassOf<class AItem> NewClass, UTexture2D* NewIcon, ESlotState NewState,
 		bool bQuestItem, AActor* Target, float DistanceToUse)
@@ -78,6 +81,7 @@ public:
 		Name = NewName;
 		Description = NewDescription;
 		Weight = NewWeight;
+		Amount = 1.f;
 		ItemClass = NewClass;
 		Icon = NewIcon;
 		State = NewState;

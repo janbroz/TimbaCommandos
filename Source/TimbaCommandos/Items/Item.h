@@ -46,6 +46,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInformation)
 		int32 Cost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInformation)
+		int32 MaxStack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInformation)
 		float Weight;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ItemInformation)
 		uint32 bInInventory : 1;
