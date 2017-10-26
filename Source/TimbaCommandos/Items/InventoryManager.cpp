@@ -5,6 +5,8 @@
 #include "Engine/World.h"
 #include "Player/GeneralController.h"
 #include "Units/PlayerUnit.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values for this component's properties
 UInventoryManager::UInventoryManager()
@@ -60,16 +62,49 @@ bool UInventoryManager::AddItem(AItem* Item)
 {
 	// TODO, we need some logic to make sure the user can add the item to the inventory.
 	bool bSuccess = true;
+	if (!Item)return false;
 
-	if (Item && FreeSlots > 0)
+	// Check if the player can carry the new item
+	float NewWeight = CurrentWeight + Item->Weight;
+	if (NewWeight <= MaxWeight)
 	{
-		FItemInformation ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->StaticClass(), Item->Icon, ESlotState::Used);
-		int32 IndexToAdd = GetFirstEmptySlot();
-		Inventory[IndexToAdd] = ItemToAdd;
-		UpdatePlayerHUDInventory();
+		// We can add the item to a new stack
+		bool bSuccessfulyStacked = false;
+		if (Item->bCanBeStacked)
+		{
+			for (FItemInformation& ItemInfo : Inventory)
+			{
+				if (ItemInfo.ItemClass == Item->GetClass())
+				{
+					ItemInfo.Amount++;
+					bSuccessfulyStacked = true;
+					break;
+				}
+			}
+			// It means the item can be stacked but there is not a stack to add it to.
+			if (!bSuccessfulyStacked)
+			{
+				FItemInformation ItemToAdd;
+				SetupSlotInformation(Item, ItemToAdd);
+				int32 IndexToAdd = GetFirstEmptySlot();
+				Inventory[IndexToAdd] = ItemToAdd;
+				FreeSlots--;
+				UsedSlots++;
+				UpdatePlayerHUDInventory();
+			}
+		}
+		else
+		{
+			FItemInformation ItemToAdd;
+			SetupSlotInformation(Item, ItemToAdd);
+			int32 IndexToAdd = GetFirstEmptySlot();
+			Inventory[IndexToAdd] = ItemToAdd;
+			FreeSlots--;
+			UsedSlots++;
+			UpdatePlayerHUDInventory();
+		}
 		Item->bInInventory = true;
 		Item->Destroy();
-		FreeSlots--;	
 	}
 	else
 	{
@@ -81,8 +116,18 @@ bool UInventoryManager::AddItem(AItem* Item)
 bool UInventoryManager::RemoveItem(int32 Index)
 {
 	bool bSuccess = true;
-	Inventory.RemoveAt(Index);
-
+	FItemInformation& CurrentSlot = Inventory[Index];
+	if (CurrentSlot.Amount > 1)
+	{
+		CurrentSlot.Amount--;
+	}
+	else
+	{
+		FItemInformation EmptySlot = FItemInformation();
+		Inventory[Index] = EmptySlot;
+		FreeSlots++;
+		UsedSlots--;
+	}
 	return bSuccess;
 }
 
@@ -150,35 +195,38 @@ void UInventoryManager::SwapItem(int32 IndexFrom, int32 IndexTo)
 	UpdatePlayerHUDInventory();
 }
 
-bool UInventoryManager::TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit)
+bool UInventoryManager::TransferItem(int32 IndexFrom, int32 IndexTo, TScriptInterface<IHasStorageActor> const & FromUnit)
 {
 	// Aditionally, it needs to check the distance between the actors.
 	// and it needs to be a bool!
 
 	bool bTransferSuccessful = false;
 
-	float DistanceBetweenActors = GetOwner()->GetDistanceTo(FromUnit);
+	AActor* StorageActor = Cast<AActor>(FromUnit.GetObject());
+	float DistanceBetweenActors = GetOwner()->GetDistanceTo(StorageActor);
+	IHasStorageActor* TheInterface = Cast<IHasStorageActor>(StorageActor);
 
-	if (DistanceBetweenActors < TRANSFER_DISTANCE)
+	if (TheInterface && DistanceBetweenActors < TRANSFER_DISTANCE)
 	{
-		int32 FromSize = GetSize(FromUnit->InventoryManager->Inventory[IndexFrom].State);
+		int32 FromSize = GetSize(TheInterface->Execute_GetInventoryManager(StorageActor)->Inventory[IndexFrom].State);
 		int32 ToSize = GetSize(Inventory[IndexTo].State);
 
-		UE_LOG(LogTemp, Warning, TEXT("From is: %d"), FromSize);
-		UE_LOG(LogTemp, Warning, TEXT("To is: %d"), ToSize);
-
 		FItemInformation TmpItem = Inventory[IndexTo];
-		Inventory[IndexTo] = FromUnit->InventoryManager->Inventory[IndexFrom];
-		FromUnit->InventoryManager->Inventory[IndexFrom] = TmpItem;
+		Inventory[IndexTo] = TheInterface->Execute_GetInventoryManager(StorageActor)->Inventory[IndexFrom];
+		TheInterface->Execute_GetInventoryManager(StorageActor)->Inventory[IndexFrom] = TmpItem;
 
-		FromUnit->InventoryManager->FreeSlots += FromSize;
-		FromUnit->InventoryManager->FreeSlots -= ToSize;
+		TheInterface->Execute_GetInventoryManager(StorageActor)->FreeSlots += FromSize;
+		TheInterface->Execute_GetInventoryManager(StorageActor)->FreeSlots -= ToSize;
 		FreeSlots += ToSize;
 		FreeSlots -= FromSize;
 
 		UpdatePlayerHUDInventory();
 
 		bTransferSuccessful = true;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Something fucked up here"));
 	}
 	return bTransferSuccessful;
 }
@@ -198,4 +246,105 @@ int32 UInventoryManager::GetSize(ESlotState State)
 		return 1;
 		break;
 	}
+}
+
+void UInventoryManager::UseItemFromSlot(int32 Index)
+{
+	// This should call the use item. If it is a consumable consume it, if it is an equipable equip it!
+	FItemInformation& ItemToUse = Inventory[Index];
+	if (ItemToUse.State == ESlotState::Used)
+	{
+		//AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(ItemToUse.ItemClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), FActorSpawnParameters());
+		FTransform Transf = FTransform(GetOwner()->GetActorRotation(), GetOwner()->GetActorLocation());
+		const AActor* Owner = GetOwner();
+		const APawn* Instigator = Cast<APawn>(Owner);
+		AItem* SpawnedItem = GetWorld()->SpawnActorDeferred<AItem>(ItemToUse.ItemClass, Transf, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+		if (SpawnedItem)
+		{	
+			SetupItemInformation(SpawnedItem, ItemToUse);
+			UGameplayStatics::FinishSpawningActor(SpawnedItem, FTransform(SpawnedItem->GetActorRotation(), SpawnedItem->GetActorLocation()));
+		}
+		
+		if (SpawnedItem)
+		{
+			SpawnedItem->SetActorEnableCollision(false);
+			SpawnedItem->ItemMesh->SetSimulatePhysics(false);
+			SpawnedItem->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
+			bool bSuccessfulUse = SpawnedItem->UseItem(GetOwner());
+			if (bSuccessfulUse)
+			{
+				if (ItemToUse.bIsStackable)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Item is stackable and should be modified"));
+					ItemToUse.Amount--;
+					if (ItemToUse.Amount <= 0)
+					{
+						RemoveItem(Index);
+					}
+				}
+				else
+				{
+					RemoveItem(Index);
+				}
+			}
+			SpawnedItem->Destroy();
+		}
+		UpdatePlayerHUDInventory();
+	}
+}
+
+void UInventoryManager::DropItem(int32 Index)
+{
+	FItemInformation ItemToUse = Inventory[Index];
+	FTransform Transf = FTransform(GetOwner()->GetActorRotation(), GetOwner()->GetActorLocation());
+	const AActor* Owner = GetOwner();
+	const APawn* Instigator = Cast<APawn>(Owner);
+	AItem* SpawnedItem = GetWorld()->SpawnActorDeferred<AItem>(ItemToUse.ItemClass, Transf, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+	if (SpawnedItem)
+	{
+		SetupItemInformation(SpawnedItem, ItemToUse);
+		SpawnedItem->bInInventory = false;
+		UGameplayStatics::FinishSpawningActor(SpawnedItem, FTransform(SpawnedItem->GetActorRotation(), SpawnedItem->GetActorLocation()));
+	}
+
+	if (SpawnedItem)
+	{
+		SpawnedItem->ItemMesh->IgnoreActorWhenMoving(GetOwner(), true);
+		FVector ForwardImpulse = Owner->GetActorForwardVector() * 500.f + Owner->GetActorUpVector() * 1000.f;
+		SpawnedItem->ItemMesh->AddImpulse(ForwardImpulse);
+		RemoveItem(Index);
+	}
+	UpdatePlayerHUDInventory();
+}
+
+void UInventoryManager::SetupItemInformation(AItem* Item, const FItemInformation ItemInfo)
+{
+	if (!Item) return;
+	
+	Item->Name = ItemInfo.Name;
+	Item->Description = ItemInfo.Description;
+	Item->Weight = ItemInfo.Weight;
+	Item->Cost = ItemInfo.Cost;
+	Item->bCanBeStacked = ItemInfo.bIsStackable;
+	if (ItemInfo.bIsQuestItem)
+	{
+		Item->bIsQuestItem = ItemInfo.bIsQuestItem;
+		Item->UsableDistance = ItemInfo.UsableDistance;
+		Item->QuestTarget = ItemInfo.QuestTarget;
+	}
+}
+
+void UInventoryManager::SetupSlotInformation(AItem* Item, FItemInformation& ItemInfo)
+{
+	if (!Item) return;
+
+	if (Item->bIsQuestItem)
+	{
+		ItemInfo = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used, true, Item->QuestTarget, Item->UsableDistance);
+	}
+	else
+	{
+		ItemInfo = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used);
+	}
+	ItemInfo.bIsStackable = Item->bCanBeStacked;
 }

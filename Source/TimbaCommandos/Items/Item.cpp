@@ -12,6 +12,10 @@ AItem::AItem()
 	// Item mesh
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Item mesh"));
 	ItemMesh->SetupAttachment(RootComponent);
+	ItemMesh->SetCollisionProfileName(TEXT("ItemActor"));
+	ItemMesh->SetSimulatePhysics(true);
+	
+	UpdateMassScale(2.f);
 
 	Name = "Basic item";
 	Description = "Oh look, its a basic item!";
@@ -24,7 +28,16 @@ AItem::AItem()
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+// We dont want our objects to weight more than a few pounds!
+void AItem::UpdateMassScale(float Value)
+{
+	FBodyInstance* BodyInstance = ItemMesh->GetBodyInstance();
+	if (!BodyInstance) return;
 	
+	BodyInstance->MassScale = Value;
+	BodyInstance->UpdateMassProperties();
 }
 
 // Called every frame
@@ -44,4 +57,10 @@ void AItem::AddToInventory()
 void AItem::RemoveFromInventory()
 {
 
+}
+
+bool AItem::UseItem_Implementation(AActor* Target)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Item was used!"));
+	return true;
 }

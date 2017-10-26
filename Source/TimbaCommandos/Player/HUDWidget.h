@@ -22,7 +22,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "HUD functions")
 		void SetHeroPortrait(class APlayerUnit* Unit);
 	UFUNCTION(BlueprintImplementableEvent, Category = "HUD functions")
-		void ShowInventory(const TArray<class APlayerUnit*>& Unit, bool bShowing);
+		void ShowInventory(const TArray<TScriptInterface<IHasStorageActor>> & Units, bool bShowing);
+		//void ShowInventory(const TArray<class APlayerUnit*>& Unit, bool bShowing);
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "HUD information")

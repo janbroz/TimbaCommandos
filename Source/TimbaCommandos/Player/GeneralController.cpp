@@ -5,6 +5,7 @@
 #include "Units/BaseUnit.h"
 #include "Units/PlayerUnit.h"
 #include "Units/EnemyUnit.h"
+#include "Units/NPCUnit.h"
 #include "Player/PlayerHUD.h"
 #include "AIController.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
@@ -14,6 +15,9 @@
 #include "Items/InventoryManager.h"
 #include "Units/UnitAIController.h"
 #include "Units/ActionsComponent.h"
+#include "Units/AbilitiesComponent.h"
+#include "Items/HasStorageActor.h"
+#include "Widgets/DialogWidget.h"
 
 AGeneralController::AGeneralController()
 {
@@ -25,6 +29,12 @@ AGeneralController::AGeneralController()
 	if (PlayerHUD_BP.Object)
 	{
 		MainHUDClass = PlayerHUD_BP.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UClass> DialogHUD_BP(TEXT("/Game/UMG/Dialog/Dialog_BP.Dialog_BP_C"));
+	if (DialogHUD_BP.Object)
+	{
+		CurrentDialogClass = DialogHUD_BP.Object;
 	}
 }
 
@@ -39,9 +49,7 @@ void AGeneralController::BeginPlay()
 		{
 			MainHUD->AddToViewport();
 		}
-
 	}
-
 }
 
 void AGeneralController::Tick(float DeltaSeconds)
@@ -74,7 +82,23 @@ void AGeneralController::RectangleDrag()
 					}
 					if (bShowingInventory)
 					{
-						MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+						//TArray<FScriptInterface<IHasStorageActor>> StorageActors;
+						TArray<TScriptInterface<IHasStorageActor>> TUnits;
+						for (auto Unit : SelectedUnits)
+						{
+							TScriptInterface<IHasStorageActor> TmpUnit; // = Cast<IHasStorageActor>(Unit);
+							TmpUnit.SetObject(Unit);
+							TUnits.Add(TmpUnit);
+						}
+						if (InteractableActor)
+						{
+							TScriptInterface<IHasStorageActor> TmpUnit;
+							TmpUnit.SetObject(InteractableActor);
+							TUnits.Add(TmpUnit);
+						}
+						//TUnits.Add(InteractableActor);
+						MainHUD->ShowInventory(TUnits, bShowingInventory);
+						//MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
 					}
 				}
 				
@@ -107,6 +131,10 @@ void AGeneralController::SetupInputComponent()
 	InputComponent->BindAction("ToggleInventory", IE_Pressed, this, &AGeneralController::ToggleInventory);
 	InputComponent->BindAction("ToggleQueue", IE_Pressed, this, &AGeneralController::ToggleQueue);
 	InputComponent->BindAction("ToggleQueue", IE_Released, this, &AGeneralController::ToggleQueue);
+	InputComponent->BindAction("AbilitySlot1", IE_Pressed, this, &AGeneralController::Ability1Pressed);
+	InputComponent->BindAction("AbilitySlot2", IE_Pressed, this, &AGeneralController::Ability2Pressed);
+	InputComponent->BindAction("AbilitySlot3", IE_Pressed, this, &AGeneralController::Ability3Pressed);
+	InputComponent->BindAction("AbilitySlot4", IE_Pressed, this, &AGeneralController::Ability4Pressed);
 
 	InputComponent->BindAxis("HorizontalMovement", this, &AGeneralController::HorizontalMov);
 	InputComponent->BindAxis("VerticalMovement", this, &AGeneralController::VerticalMov);
@@ -120,6 +148,12 @@ void AGeneralController::LeftMousePressed()
 	
 	GetMousePosition(Init.X, Init.Y);
 	End = Init;
+
+	if (!bShowingInventory)
+	{
+		InteractableActor = nullptr;
+		UpdateInventoryWidgets();
+	}
 
 	APlayerHUD* PlayerHUD = Cast<APlayerHUD>(GetHUD());
 	if (PlayerHUD)
@@ -153,7 +187,21 @@ void AGeneralController::LeftMousePressed()
 		MainHUD->UpdateSelectedUnits(SelectedUnits);
 		if (bShowingInventory)
 		{
-			MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+			//MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+			TArray<TScriptInterface<IHasStorageActor>> TUnits;
+			for (auto Unit : SelectedUnits)
+			{
+				TScriptInterface<IHasStorageActor> TmpUnit; // = Cast<IHasStorageActor>(Unit);
+				TmpUnit.SetObject(Unit);
+				TUnits.Add(TmpUnit);
+			}
+			if (InteractableActor)
+			{
+				TScriptInterface<IHasStorageActor> TmpUnit;
+				TmpUnit.SetObject(InteractableActor);
+				TUnits.Add(TmpUnit);
+			}
+			MainHUD->ShowInventory(TUnits, bShowingInventory);
 		}
 	}
 }
@@ -209,16 +257,18 @@ void AGeneralController::RightMousePressed()
 		GetHitResultUnderCursor(ECollisionChannel::ECC_Camera, true, Hit);
 
 		
-		if (Hit.bBlockingHit)
+		if (Hit.bBlockingHit) // This should be fixes ASAP
+			// We dont want the player to be able to click through the widgets.
 		{
 			// There is a lot of duplicated code. I think it is easier to read this way.
 			// Could be refactored later.
 			AItem* ValidItem = Cast<AItem>(Hit.GetActor());
 			AEnemyUnit* EnemyUnit = Cast<AEnemyUnit>(Hit.GetActor());
-
+			ANPCUnit* NPCUnit = Cast<ANPCUnit>(Hit.GetActor());
 			// Check if it is a valid item and then queue the get item action
 			APlayerUnit* ResponsibleUnit = SelectedUnits[0];
 			AUnitAIController* UnitController = Cast<AUnitAIController>(ResponsibleUnit->GetController());
+			IHasStorageActor* StorageActor = Cast<IHasStorageActor>(Hit.GetActor());
 
 			// We should check before if the player is trying to queue an action or replace the current one!
 			if (bQueueActions)
@@ -251,6 +301,10 @@ void AGeneralController::RightMousePressed()
 						}
 					}
 				}
+				else if (NPCUnit)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Clicked an npc"));
+				}
 				// The clicked actor is something else.
 				else
 				{			
@@ -275,13 +329,27 @@ void AGeneralController::RightMousePressed()
 					UnitController->InterruptActions(false);
 				}
 				// The clicked actor is an enemy.
-				else if (EnemyUnit)
+				else if (EnemyUnit && EnemyUnit->IsUnitAlive())
 				{
-					FActionInformation ActionInfo;
+					
 					for (auto Unit : SelectedUnits)
 					{
-						ActionInfo = EnemyUnit->IsUnitAlive() ? FActionInformation(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0) :
-							FActionInformation(EUnitAction::Interact, Unit, EnemyUnit, Hit.Location, 0);
+						FActionInformation ActionInfo(EUnitAction::Attack, Unit, EnemyUnit, Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						if (AIController->IsUnitActive())
+						{
+							AIController->InterruptActions(true);
+						}
+						AIController->AddActionToQueue(ActionInfo, false);
+						AIController->InterruptActions(false);
+					}
+				}
+				else if (NPCUnit)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Clicked an npc one two three"));
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::NPC_Interact, Unit, Hit.GetActor(), Hit.Location, 0);
 						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
 						if (AIController->IsUnitActive())
 						{
@@ -292,11 +360,24 @@ void AGeneralController::RightMousePressed()
 					}
 				}
 				// The clicked actor is something else.
+				else if (StorageActor)
+				{
+					for (auto Unit : SelectedUnits)
+					{
+						FActionInformation ActionInfo(EUnitAction::Interact, Unit, Hit.GetActor(), Hit.Location, 0);
+						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
+						if (AIController->IsUnitActive())
+						{
+							AIController->InterruptActions(true);
+						}
+						AIController->AddActionToQueue(ActionInfo, false);
+						AIController->InterruptActions(false);
+					}
+				}
 				else
 				{
 					for (auto Unit : SelectedUnits)
 					{
-						
 						FActionInformation ActionInfo(EUnitAction::Move, Unit, nullptr, Hit.Location, 0);
 						AUnitAIController* AIController = Cast<AUnitAIController>(Unit->GetController());
 						AIController->MoveToLocation(Hit.Location, 150.f);
@@ -310,7 +391,48 @@ void AGeneralController::RightMousePressed()
 				}
 			}
 		}
-		
+	}
+}
+
+void AGeneralController::Ability1Pressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 1"));
+	
+	for (auto Unit : SelectedUnits)
+	{
+		Unit->AbilitiesManager->UseAbilityAtSlot(0);
+	}
+
+	
+}
+
+void AGeneralController::Ability2Pressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 2"));
+
+	for (auto Unit : SelectedUnits)
+	{
+		Unit->AbilitiesManager->UseAbilityAtSlot(1);
+	}
+}
+
+void AGeneralController::Ability3Pressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 3"));
+
+	for (auto Unit : SelectedUnits)
+	{
+		Unit->AbilitiesManager->UseAbilityAtSlot(2);
+	}
+}
+
+void AGeneralController::Ability4Pressed()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Pressed ability 4"));
+
+	for (auto Unit : SelectedUnits)
+	{
+		Unit->AbilitiesManager->UseAbilityAtSlot(3);
 	}
 }
 
@@ -402,7 +524,22 @@ void AGeneralController::UpdateInventoryWidgets()
 {
 	if (MainHUD)
 	{
-		MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+		//MainHUD->ShowInventory(SelectedUnits, bShowingInventory);
+		TArray<TScriptInterface<IHasStorageActor>> TUnits;
+		for (auto Unit : SelectedUnits)
+		{
+			TScriptInterface<IHasStorageActor> TmpUnit; // = Cast<IHasStorageActor>(Unit);
+			TmpUnit.SetObject(Unit);
+			TUnits.Add(TmpUnit);
+		}
+		if (InteractableActor)
+		{
+			TScriptInterface<IHasStorageActor> TmpUnit;
+			TmpUnit.SetObject(InteractableActor);
+			TUnits.AddUnique(TmpUnit);
+		}
+		
+		MainHUD->ShowInventory(TUnits, bShowingInventory);
 	}
 
 }
@@ -410,4 +547,22 @@ void AGeneralController::UpdateInventoryWidgets()
 void AGeneralController::ToggleQueue()
 {
 	bQueueActions = !bQueueActions;
+}
+
+void AGeneralController::BeginDialog(TArray<FDialogInformation> Dialog, UTexture2D* Portrait)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Someone is talking to us"));
+	if (CurrentDialogWidget)
+	{
+		CurrentDialogWidget->RemoveFromParent();
+	}
+	
+	CurrentDialogWidget = CreateWidget<UDialogWidget>(this, CurrentDialogClass);
+	if (!CurrentDialogWidget) return;
+	CurrentDialogWidget->DialogOptions = Dialog;
+	CurrentDialogWidget->Portrait = Portrait;
+	CurrentDialogWidget->InitializeDialog();
+	CurrentDialogWidget->AddToViewport();
+	CurrentDialogWidget->SetDesiredSizeInViewport(FVector2D(400.f, 200.f));
+	CurrentDialogWidget->SetPositionInViewport(FVector2D(100.f, 100.f));
 }

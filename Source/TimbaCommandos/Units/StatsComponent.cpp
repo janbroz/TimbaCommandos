@@ -107,7 +107,8 @@ void UStatsComponent::UpdateStatMin(EStat Stat, float Value)
 void UStatsComponent::UpdateStatCurrent(EStat Stat, float Value)
 {
 	FStatInformation* Info = Stats.Find(Stat);
-	Info->CurrentValue = Value;
+	float NewVal = FMath::Clamp(Info->CurrentValue + Value, Info->MinValue, Info->MaxValue);
+	Info->CurrentValue = NewVal;
 	UpdateStatPercent(Stat);
 }
 

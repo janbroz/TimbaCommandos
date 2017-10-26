@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/Texture2D.h"
 #include "DataStructures.generated.h"
 /**
  * 
@@ -44,6 +45,7 @@ enum class EUnitAction : uint8
 	Move				UMETA(DisplayName = "Move"),
 	Attack				UMETA(DisplayName = "Attack"),
 	Interact			UMETA(DisplayName = "Interact"),
+	NPC_Interact		UMETA(DisplayName = "NPC interact"),
 	Take				UMETA(DisplayName = "Take")
 };
 
@@ -66,8 +68,29 @@ public:
 		ItemClass = NewClass;
 		Icon = NewIcon;
 		State = NewState;
+		QuestTarget = nullptr;
+		UsableDistance = 0;
+		bIsQuestItem = false;
+		Amount = 1;
+		Cost = 0;
 	}
-	FItemInformation() { State = ESlotState::Empty; ItemClass = nullptr; Icon = nullptr; }
+	FItemInformation() { State = ESlotState::Empty; ItemClass = nullptr; Icon = nullptr; Weight = 0.f; Amount = 0.f; QuestTarget = nullptr; Cost = 0; }
+
+	FItemInformation(FName NewName, FString NewDescription, float NewWeight, TSubclassOf<class AItem> NewClass, UTexture2D* NewIcon, ESlotState NewState,
+		bool bQuestItem, AActor* Target, float DistanceToUse)
+	{
+		Name = NewName;
+		Description = NewDescription;
+		Weight = NewWeight;
+		Amount = 1.f;
+		ItemClass = NewClass;
+		Icon = NewIcon;
+		State = NewState;
+		bIsQuestItem = bQuestItem;
+		QuestTarget = Target;
+		UsableDistance = DistanceToUse;
+		Cost = 0;
+	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
 		FName Name;
@@ -77,12 +100,22 @@ public:
 		float Weight;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item information")
 		float Amount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item information")
+		int32 Cost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
 		TSubclassOf<class AItem> ItemClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
 		UTexture2D* Icon;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
 		ESlotState State;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		bool bIsQuestItem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		bool bIsStackable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		AActor* QuestTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
+		float UsableDistance;
 };
 
 USTRUCT(BlueprintType)
@@ -126,6 +159,41 @@ public:
 		FVector Destiny;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Action information")
 		int32 Priority;
+};
+
+USTRUCT(BlueprintType)
+struct FDialogOption
+{
+	GENERATED_BODY()
+
+public:
+	FDialogOption() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		FString Text;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		int32 Id;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		int32 TargetId;
+};
+USTRUCT(BlueprintType)
+struct FDialogInformation
+{
+	GENERATED_BODY()
+
+public:
+	FDialogInformation() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		FString Name;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		FString DialogText;
+	// This id should be unique, cause we reference it from the FDialogOption
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		int32 DialogId;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog information")
+		TArray<FDialogOption> Options;
+
 };
 
 

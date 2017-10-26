@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "DataStructures.h"
 #include "GeneralController.generated.h"
 
 /**
@@ -65,10 +66,28 @@ public:
 	void ToggleInventory();
 
 	// Update the inventory widget!
-	void UpdateInventoryWidgets();
+	UFUNCTION(BlueprintCallable, Category = "HUD stuff")
+		void UpdateInventoryWidgets();
 
 	// Make the player queue actions
 	void ToggleQueue();
+
+	// Dialog with the NPCs
+	void BeginDialog(TArray<FDialogInformation> Dialog, UTexture2D* Portrait);
+
+	// TODO - Player should be able to bind abilities to different keys.
+	// Cast The first ability.
+	UFUNCTION(BlueprintCallable, Category = "Ability cast")
+		void Ability1Pressed();
+	// Cast The second ability.
+	UFUNCTION(BlueprintCallable, Category = "Ability cast")
+		void Ability2Pressed();
+	// Cast The third ability.
+	UFUNCTION(BlueprintCallable, Category = "Ability cast")
+		void Ability3Pressed();
+	// Cast The forth ability.
+	UFUNCTION(BlueprintCallable, Category = "Ability cast")
+		void Ability4Pressed();
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
@@ -95,4 +114,8 @@ public:
 		TSubclassOf<class UHUDWidget> MainHUDClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
 		AActor* InteractableActor;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
+		class UDialogWidget* CurrentDialogWidget;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player variables")
+		TSubclassOf<UDialogWidget> CurrentDialogClass;
 };

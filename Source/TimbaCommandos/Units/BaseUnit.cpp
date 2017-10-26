@@ -9,7 +9,7 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Items/InventoryManager.h"
 #include "Units/StatsComponent.h"
-
+#include "Units/AbilitiesComponent.h"
 
 // Sets default values
 ABaseUnit::ABaseUnit()
@@ -36,6 +36,8 @@ ABaseUnit::ABaseUnit()
 	// The stats manager
 	StatsManager = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsManager"));
 
+	// Abilities manager
+	AbilitiesManager = CreateDefaultSubobject<UAbilitiesComponent>(TEXT("AbilitiesManager"));
 }
 
 // Called when the game starts or when spawned
@@ -74,10 +76,20 @@ void ABaseUnit::SetUnitSelected(bool bSelected)
 	}
 }
 
-UInventoryManager* ABaseUnit::GetInventoryManager() const
+UInventoryManager* ABaseUnit::GetInventoryManager_Implementation() const
 {
 	return InventoryManager;
 }
+
+UTexture2D* ABaseUnit::GetPortrait_Implementation() const
+{
+	return UnitPortrait;
+}
+
+//bool ABaseUnit::ReactToHighNoon_Implementation()
+//{
+//	return true;
+//}
 
 float ABaseUnit::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {

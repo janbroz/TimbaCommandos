@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "DataStructures.h"
+#include "Items/HasStorageActor.h"
 #include "InventoryManager.generated.h"
 
 
@@ -23,6 +24,8 @@ protected:
 
 private:
 	const float TRANSFER_DISTANCE = 300.f;
+	void SetupItemInformation(AItem* Item, const FItemInformation ItemInfo);
+	void SetupSlotInformation(AItem* Item, FItemInformation& ItemInfo);
 
 public:	
 	// Called every frame
@@ -51,7 +54,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SwapItem(int32 IndexFrom, int32 IndexTo);
 	UFUNCTION(BlueprintCallable)
-		bool TransferItem(int32 IndexFrom, int32 IndexTo, APlayerUnit* FromUnit);
+		bool TransferItem(int32 IndexFrom, int32 IndexTo, TScriptInterface<IHasStorageActor> const & FromUnit);
+	UFUNCTION(BlueprintCallable)
+		void UseItemFromSlot(int32 Index);
+	UFUNCTION(BlueprintCallable)
+		void DropItem(int32 Index);
 
 	int32 GetSize(ESlotState Slot);
 
