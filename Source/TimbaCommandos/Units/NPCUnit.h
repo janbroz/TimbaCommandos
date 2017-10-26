@@ -27,4 +27,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog info")
 		uint32 bQuestIsCompleted : 1;
 
+public:
+	UFUNCTION()
+		void CompleteQuest();
+
 };

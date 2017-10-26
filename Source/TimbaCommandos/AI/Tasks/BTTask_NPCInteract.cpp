@@ -44,11 +44,10 @@ void UBTTask_NPCInteract::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 			AGeneralController* GC = Cast<AGeneralController>(PC);
 			if (GC)
 			{
-				//UDialogWidget* DialogWidget = CreateWidget<UDialogWidget>(GC, UDialogWidget::StaticClass());
 				ANPCUnit* Unit = Cast<ANPCUnit>(Target);
 				if (GC)
 				{
-					GC->BeginDialog(Unit->DialogInfo, Unit->UnitPortrait);
+					GC->BeginDialog(Unit);
 				}	
 			}
 

@@ -31,7 +31,7 @@ AGeneralController::AGeneralController()
 		MainHUDClass = PlayerHUD_BP.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UClass> DialogHUD_BP(TEXT("/Game/UMG/Dialog/Dialog_BP.Dialog_BP_C"));
+	static ConstructorHelpers::FObjectFinder<UClass> DialogHUD_BP(TEXT("/Game/UMG/Dialog/TestDialog_BP.TestDialog_BP_C"));
 	if (DialogHUD_BP.Object)
 	{
 		CurrentDialogClass = DialogHUD_BP.Object;
@@ -549,20 +549,12 @@ void AGeneralController::ToggleQueue()
 	bQueueActions = !bQueueActions;
 }
 
-void AGeneralController::BeginDialog(TArray<FDialogInformation> Dialog, UTexture2D* Portrait)
+void AGeneralController::BeginDialog(ANPCUnit* Npc)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Someone is talking to us"));
-	if (CurrentDialogWidget)
-	{
-		CurrentDialogWidget->RemoveFromParent();
-	}
-	
 	CurrentDialogWidget = CreateWidget<UDialogWidget>(this, CurrentDialogClass);
-	if (!CurrentDialogWidget) return;
-	CurrentDialogWidget->DialogOptions = Dialog;
-	CurrentDialogWidget->Portrait = Portrait;
+	if (!CurrentDialogWidget || !MainHUD || !Npc) return;
+	CurrentDialogWidget->Npc = Npc;
 	CurrentDialogWidget->InitializeDialog();
-	CurrentDialogWidget->AddToViewport();
-	CurrentDialogWidget->SetDesiredSizeInViewport(FVector2D(400.f, 200.f));
-	CurrentDialogWidget->SetPositionInViewport(FVector2D(100.f, 100.f));
+	MainHUD->ShowDialogBox(CurrentDialogWidget);
+	
 }

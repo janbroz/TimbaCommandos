@@ -24,7 +24,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "HUD functions")
 		void ShowInventory(const TArray<TScriptInterface<IHasStorageActor>> & Units, bool bShowing);
 		//void ShowInventory(const TArray<class APlayerUnit*>& Unit, bool bShowing);
-
+	UFUNCTION(BlueprintImplementableEvent, Category = "HUD functions")
+		void ShowDialogBox(class UDialogWidget* DialogWidget);
+	UFUNCTION(BlueprintImplementableEvent, Category = "HUD functions")
+		void CloseDialogBox();
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "HUD information")
 		uint32 bShowingInventroy : 1;

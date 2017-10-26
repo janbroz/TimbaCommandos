@@ -73,7 +73,8 @@ public:
 	void ToggleQueue();
 
 	// Dialog with the NPCs
-	void BeginDialog(TArray<FDialogInformation> Dialog, UTexture2D* Portrait);
+	//void BeginDialog(TArray<FDialogInformation> Dialog, UTexture2D* Portrait);
+	void BeginDialog(class ANPCUnit* Npc);
 
 	// TODO - Player should be able to bind abilities to different keys.
 	// Cast The first ability.

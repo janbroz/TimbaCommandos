@@ -11,3 +11,7 @@ ANPCUnit::ANPCUnit()
 	bQuestIsCompleted = false;
 }
 
+void ANPCUnit::CompleteQuest()
+{
+	bQuestIsCompleted = true;
+}

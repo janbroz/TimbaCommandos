@@ -32,4 +32,6 @@ public:
 		int32 DialogIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget information")
 		int32 DialogSize;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget information")
+		class ANPCUnit* Npc;
 };
