@@ -346,3 +346,18 @@ void UInventoryManager::DropItem(int32 Index)
 	}
 	UpdatePlayerHUDInventory();
 }
+
+void UInventoryManager::SetupItemInformation(AItem* Item, const FItemInformation ItemInfo)
+{
+	if (Item)
+	{
+		Item->Name = ItemInfo.Name;
+		Item->Description = ItemInfo.Description;
+		Item->Weight = ItemInfo.Weight;
+		//Item->Cost = ItemInfo.Cost;
+		Item->bCanBeStacked = ItemInfo.bIsStackable;
+		Item->bIsQuestItem = ItemInfo.bIsQuestItem;
+		Item->UsableDistance = ItemInfo.UsableDistance;
+		Item->QuestTarget = ItemInfo.QuestTarget;
+	}
+}
