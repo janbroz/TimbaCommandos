@@ -6,5 +6,8 @@
 ANPCUnit::ANPCUnit()
 {
 	AIControllerClass = ANPCAIController::StaticClass();
+
+	bHasQuest = false;
+	bQuestIsCompleted = false;
 }
 

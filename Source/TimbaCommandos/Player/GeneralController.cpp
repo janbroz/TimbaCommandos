@@ -558,6 +558,7 @@ void AGeneralController::BeginDialog(TArray<FDialogInformation> Dialog, UTexture
 	}
 	
 	CurrentDialogWidget = CreateWidget<UDialogWidget>(this, CurrentDialogClass);
+	if (!CurrentDialogWidget) return;
 	CurrentDialogWidget->DialogOptions = Dialog;
 	CurrentDialogWidget->Portrait = Portrait;
 	CurrentDialogWidget->InitializeDialog();

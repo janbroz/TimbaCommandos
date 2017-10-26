@@ -25,7 +25,7 @@ protected:
 private:
 	const float TRANSFER_DISTANCE = 300.f;
 	void SetupItemInformation(AItem* Item, const FItemInformation ItemInfo);
-
+	void SetupSlotInformation(AItem* Item, FItemInformation& ItemInfo);
 
 public:	
 	// Called every frame

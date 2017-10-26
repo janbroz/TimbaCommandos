@@ -72,8 +72,9 @@ public:
 		UsableDistance = 0;
 		bIsQuestItem = false;
 		Amount = 1;
+		Cost = 0;
 	}
-	FItemInformation() { State = ESlotState::Empty; ItemClass = nullptr; Icon = nullptr; Weight = 0.f; Amount = 0.f; QuestTarget = nullptr; }
+	FItemInformation() { State = ESlotState::Empty; ItemClass = nullptr; Icon = nullptr; Weight = 0.f; Amount = 0.f; QuestTarget = nullptr; Cost = 0; }
 
 	FItemInformation(FName NewName, FString NewDescription, float NewWeight, TSubclassOf<class AItem> NewClass, UTexture2D* NewIcon, ESlotState NewState,
 		bool bQuestItem, AActor* Target, float DistanceToUse)
@@ -88,6 +89,7 @@ public:
 		bIsQuestItem = bQuestItem;
 		QuestTarget = Target;
 		UsableDistance = DistanceToUse;
+		Cost = 0;
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
@@ -98,6 +100,8 @@ public:
 		float Weight;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item information")
 		float Amount;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item information")
+		int32 Cost;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")
 		TSubclassOf<class AItem> ItemClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item information")

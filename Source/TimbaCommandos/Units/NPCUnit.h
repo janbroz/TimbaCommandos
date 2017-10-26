@@ -22,4 +22,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog info")
 		TArray<FDialogInformation> DialogInfo;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog info")
+		uint32 bHasQuest : 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialog info")
+		uint32 bQuestIsCompleted : 1;
+
 };

@@ -85,15 +85,7 @@ bool UInventoryManager::AddItem(AItem* Item)
 			if (!bSuccessfulyStacked)
 			{
 				FItemInformation ItemToAdd;
-				if (Item->bIsQuestItem)
-				{
-					ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used, true, Item->QuestTarget, Item->UsableDistance);
-				}
-				else
-				{
-					ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used);
-				}
-				ItemToAdd.bIsStackable = Item->bCanBeStacked;
+				SetupSlotInformation(Item, ItemToAdd);
 				int32 IndexToAdd = GetFirstEmptySlot();
 				Inventory[IndexToAdd] = ItemToAdd;
 				FreeSlots--;
@@ -104,14 +96,7 @@ bool UInventoryManager::AddItem(AItem* Item)
 		else
 		{
 			FItemInformation ItemToAdd;
-			if (Item->bIsQuestItem)
-			{
-				ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used, true, Item->QuestTarget, Item->UsableDistance);
-			}
-			else
-			{
-				ItemToAdd = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used);
-			}
+			SetupSlotInformation(Item, ItemToAdd);
 			int32 IndexToAdd = GetFirstEmptySlot();
 			Inventory[IndexToAdd] = ItemToAdd;
 			FreeSlots--;
@@ -276,12 +261,7 @@ void UInventoryManager::UseItemFromSlot(int32 Index)
 		AItem* SpawnedItem = GetWorld()->SpawnActorDeferred<AItem>(ItemToUse.ItemClass, Transf, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 		if (SpawnedItem)
 		{	
-			if (ItemToUse.bIsQuestItem)
-			{
-				SpawnedItem->bIsQuestItem = ItemToUse.bIsQuestItem;
-				SpawnedItem->UsableDistance = ItemToUse.UsableDistance;
-				SpawnedItem->QuestTarget = ItemToUse.QuestTarget;
-			}
+			SetupItemInformation(SpawnedItem, ItemToUse);
 			UGameplayStatics::FinishSpawningActor(SpawnedItem, FTransform(SpawnedItem->GetActorRotation(), SpawnedItem->GetActorLocation()));
 		}
 		
@@ -322,18 +302,8 @@ void UInventoryManager::DropItem(int32 Index)
 	AItem* SpawnedItem = GetWorld()->SpawnActorDeferred<AItem>(ItemToUse.ItemClass, Transf, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 	if (SpawnedItem)
 	{
-		SpawnedItem->Name = ItemToUse.Name;
-		SpawnedItem->Description = ItemToUse.Description;
-		SpawnedItem->Weight = ItemToUse.Weight;
+		SetupItemInformation(SpawnedItem, ItemToUse);
 		SpawnedItem->bInInventory = false;
-		SpawnedItem->bCanBeStacked = ItemToUse.bIsStackable;
-
-		if (ItemToUse.bIsQuestItem)
-		{
-			SpawnedItem->bIsQuestItem = ItemToUse.bIsQuestItem;
-			SpawnedItem->UsableDistance = ItemToUse.UsableDistance;
-			SpawnedItem->QuestTarget = ItemToUse.QuestTarget;
-		}
 		UGameplayStatics::FinishSpawningActor(SpawnedItem, FTransform(SpawnedItem->GetActorRotation(), SpawnedItem->GetActorLocation()));
 	}
 
@@ -349,15 +319,32 @@ void UInventoryManager::DropItem(int32 Index)
 
 void UInventoryManager::SetupItemInformation(AItem* Item, const FItemInformation ItemInfo)
 {
-	if (Item)
+	if (!Item) return;
+	
+	Item->Name = ItemInfo.Name;
+	Item->Description = ItemInfo.Description;
+	Item->Weight = ItemInfo.Weight;
+	Item->Cost = ItemInfo.Cost;
+	Item->bCanBeStacked = ItemInfo.bIsStackable;
+	if (ItemInfo.bIsQuestItem)
 	{
-		Item->Name = ItemInfo.Name;
-		Item->Description = ItemInfo.Description;
-		Item->Weight = ItemInfo.Weight;
-		//Item->Cost = ItemInfo.Cost;
-		Item->bCanBeStacked = ItemInfo.bIsStackable;
 		Item->bIsQuestItem = ItemInfo.bIsQuestItem;
 		Item->UsableDistance = ItemInfo.UsableDistance;
 		Item->QuestTarget = ItemInfo.QuestTarget;
 	}
+}
+
+void UInventoryManager::SetupSlotInformation(AItem* Item, FItemInformation& ItemInfo)
+{
+	if (!Item) return;
+
+	if (Item->bIsQuestItem)
+	{
+		ItemInfo = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used, true, Item->QuestTarget, Item->UsableDistance);
+	}
+	else
+	{
+		ItemInfo = FItemInformation(Item->Name, Item->Description, Item->Weight, Item->GetClass(), Item->Icon, ESlotState::Used);
+	}
+	ItemInfo.bIsStackable = Item->bCanBeStacked;
 }
