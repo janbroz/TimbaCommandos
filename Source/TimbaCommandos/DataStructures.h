@@ -49,10 +49,19 @@ enum class EUnitAction : uint8
 	Take				UMETA(DisplayName = "Take")
 };
 
+UENUM(BlueprintType)
+enum class EQuestState : uint8
+{
+	Active				UMETA(DisplayName = "Active"),
+	Completed			UMETA(DisplayName = "Completed"),
+	Failed				UMETA(DisplayName = "Failed")
+};
+
 inline uint8 GetTypeHash(const EUnitClass A) { return (uint8)A; }
 inline uint8 GetTypeHash(const ESlotState A) { return (uint8)A; }
 inline uint8 GetTypeHash(const EStat A) { return (uint8)A; }
 inline uint8 GetTypeHash(const EUnitAction A) { return (uint8)A; }
+inline uint8 GetTypeHash(const EQuestState A) { return (uint8)A; }
 
 USTRUCT(BlueprintType)
 struct FItemInformation
